@@ -1,0 +1,15 @@
+
+/* Class = "UIImageView"; accessibilityLabel = "image"; ObjectID = "G96-IT-Lyl"; */
+"G96-IT-Lyl.accessibilityLabel" = "image";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Kgk-cG-bWB"; */
+"Kgk-cG-bWB.text" = "Label";
+
+/* Class = "UILabel"; text = "Title of this Project"; ObjectID = "Unu-jk-CsB"; */
+"Unu-jk-CsB.text" = "Title of this Project";
+
+/* Class = "UIBarButtonItem"; title = "Edit"; ObjectID = "f4x-QI-jDS"; */
+"f4x-QI-jDS.title" = "Edit";
+
+/* Class = "UITextField"; text = "New Writting"; ObjectID = "hUd-Xv-FvW"; */
+"hUd-Xv-FvW.text" = "New Writting";
