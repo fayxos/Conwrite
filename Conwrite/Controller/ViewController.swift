@@ -10,7 +10,7 @@ import UIKit
 // constanten für persistente datenspeicherung
 let fontFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Fonts.plist")
 let projectFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Projects.plist")
-
+let letterDrawingsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Letters.plist")
 
 class ViewController: UIViewController {
         

@@ -12,15 +12,46 @@ protocol fontDelegate {
     func updateFontView(font: Font)
 }
 
+
+
 class AddFontViewController: UIViewController, PKToolPickerObserver {
 
+    private var myKey: String = "myKey"
+    
     //MARK: - Outlets
     @IBOutlet weak var fontNameTextField: UITextField!
     @IBOutlet weak var drawingsCollectionView: UICollectionView!
     @IBOutlet weak var pencilButton: UIButton!
+
     
     //MARK: - Attributes
-    var letterDrawings: [String: PKDrawing?] = Letter.getEmptyLetterArray()
+    var letterDrawings: [String: PKDrawing?]
+    {
+        set {
+            let encoder = PropertyListEncoder()
+            do {
+                try encoder.encode(newValue).write(to: letterDrawingsPath!)
+            } catch {
+                print("Error: \(error)")
+            }
+        }
+        get {
+            if let data = try? Data(contentsOf: letterDrawingsPath!) {
+                let decoder = PropertyListDecoder()
+                
+                do {
+                    return try decoder.decode([String: PKDrawing?].self, from: data)
+                } catch {
+                    print("Error: \(error)")
+                }
+            }
+
+            return [:]
+        }
+    }
+    
+    
+    //= Letter.getEmptyLetterArray()
     var letters: [String] = Letter.getLetters()
     
     var font: Font? = nil
@@ -29,6 +60,8 @@ class AddFontViewController: UIViewController, PKToolPickerObserver {
         
     var toolPicker: PKToolPicker = PKToolPicker()
     var toolPickerResponderView: PKCanvasView?
+    
+    var activeCell: DrawingCell?
     var aCell: DrawingCell?
     
     var drawingIsEditing: Bool = true {
@@ -46,6 +79,8 @@ class AddFontViewController: UIViewController, PKToolPickerObserver {
     //MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        letterDrawings = Letter.getEmptyLetterArray()
         
         fontNameTextField.layer.cornerRadius = 10
         fontNameTextField.layer.borderWidth = 1
@@ -66,6 +101,39 @@ class AddFontViewController: UIViewController, PKToolPickerObserver {
             selectedFont = nil
         }
     }
+    
+    /*
+    func getLetter(letter: String) -> PKDrawing? {
+        if let data = try? Data(contentsOf: letterDrawingsPath!) {
+            let decoder = PropertyListDecoder()
+            
+            do {
+                return try decoder.decode([String: PKDrawing?].self, from: data)[letter]!
+            } catch {
+                print("Error: \(error)")
+            }
+        }
+
+        return nil
+    }
+    
+    func setLetter(letter: String, drawing: PKDrawing) {
+        let encoder = PropertyListEncoder()
+        do {
+            let decoder = PropertyListDecoder()
+            
+            do {
+                return try decoder.decode([String: PKDrawing?].self, from: data)[letter]!
+            } catch {
+                print("Error: \(error)")
+            }
+            let data = try encoder.encode()
+            try data.write(to: letterDrawingsPath!)
+        } catch {
+            print("Error: \(error)")
+        }
+    }
+     */
     
     override var prefersHomeIndicatorAutoHidden: Bool {
         return true
@@ -229,12 +297,26 @@ class AddFontViewController: UIViewController, PKToolPickerObserver {
             }
         }
         
+        // Save active cell
+        let visibleCells = drawingsCollectionView.visibleCells
+        for cell in visibleCells {
+            let drawingCell = cell as! DrawingCell
+            if drawingCell.isActive {
+                letterDrawings[drawingCell.letterLabel.text!] = drawingCell.drawingView?.drawing
+            }
+        }
+        
         // Check if A canvas view has drawing
-        if aCell!.canvasView.drawing.bounds.height == 0 && aCell!.canvasView.drawing.bounds.width == 0 {
-            aCell?.layer.borderColor = UIColor.red.cgColor
-            showErrorAlert(errorType: .Empty)
+        if let drawing = letterDrawings["A"] {
+            if drawing!.bounds.height == 0 && drawing!.bounds.width == 0 {
+                aCell?.layer.borderColor = UIColor.red.cgColor
+                showErrorAlert(errorType: .Empty)
+                return
+            }
+        } else {
             return
         }
+        
         
         // Save changes to font
         if font == nil {
@@ -247,14 +329,8 @@ class AddFontViewController: UIViewController, PKToolPickerObserver {
             font?.name = fontNameTextField.text!
         }
         
-        // update letterDrawings
-        let cells = drawingsCollectionView.visibleCells
-        for cell in cells {
-            let drawingCell = cell as! DrawingCell
-            letterDrawings[drawingCell.letterLabel.text!] = drawingCell.canvasView.drawing
-        }
         
-        
+        // Store drawings in font
         for (key, drawing) in letterDrawings {
             font?.addCharacter(character: key, drawing: drawing!)
         }
@@ -281,8 +357,23 @@ class AddFontViewController: UIViewController, PKToolPickerObserver {
         let visibleCells = drawingsCollectionView.visibleCells
         for cell in visibleCells {
             let drawingCell = cell as! DrawingCell
-            let drawing = drawingCell.canvasView.drawing
-            letterDrawings[drawingCell.letterLabel.text!] = drawing
+            if drawingCell.isActive {
+                let drawing = drawingCell.drawingView!.drawing
+                letterDrawings[drawingCell.letterLabel.text!] = drawing
+                drawingCell.canvasView.image = drawing.image(from: CGRect(x: 0, y: 0, width: 100, height: 128), scale: 1)
+                
+                // show image
+                drawingCell.canvasView.isHidden = false
+                
+                // clear drawing
+                drawingCell.drawingView!.drawing = PKDrawing()
+                drawingCell.drawingView!.isHidden = true
+                
+                cell.layer.borderColor = UIColor.white.cgColor
+                drawingCell.layer.borderWidth = 1
+                
+                drawingCell.isActive = false
+            }
         }
     }
     
@@ -298,7 +389,7 @@ extension AddFontViewController: UICollectionViewDelegate {
 }
 
 //MARK: - CV DataSource Extension
-extension AddFontViewController: UICollectionViewDataSource {
+extension AddFontViewController: UICollectionViewDataSource, PKCanvasViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return letters.count
     }
@@ -309,13 +400,10 @@ extension AddFontViewController: UICollectionViewDataSource {
         let character: String = letters[indexPath.row]
         
         cell.letterLabel.text = character
-
                 
         if letterDrawings[character] != nil {
             let drawing: PKDrawing = letterDrawings[character]!!
-            cell.canvasView.drawing = drawing
-        } else {
-            cell.canvasView.drawing = PKDrawing()
+            cell.canvasView.image = drawing.image(from: CGRect(x: 0, y: 0, width: 100, height: 128), scale: 1)
         }
         
         cell.canvasView.overrideUserInterfaceStyle = .dark
@@ -324,19 +412,104 @@ extension AddFontViewController: UICollectionViewDataSource {
         cell.layer.borderWidth = 1
         cell.layer.borderColor = UIColor.white.cgColor
         
+        // show image
+        cell.canvasView.isHidden = false
+        
+        
+        cell.isActive = false
+        
         if indexPath.row == 0 && cell.letterLabel.text == "A" {
-            toolPickerResponderView = cell.canvasView
-            toolPicker.setVisible(true, forFirstResponder: toolPickerResponderView!)
-            cell.canvasView.becomeFirstResponder()
             
+            cell.drawingView = PKCanvasView()
+            cell.insertSubview(cell.drawingView!, at: 1)
+            cell.drawingView!.frame = CGRect(x: 0, y: 0, width: 100, height: 128)
+            cell.drawingView!.backgroundColor = .clear
+            
+            if letterDrawings["A"] != nil {
+                cell.drawingView!.drawing = letterDrawings["A"]!!
+            }
+            
+            // Handling new active cell
+            cell.drawingView!.isHidden = false
+            cell.canvasView.isHidden = true
+                        
+            toolPickerResponderView = cell.drawingView
+            toolPicker.setVisible(true, forFirstResponder: toolPickerResponderView!)
+            toolPicker.addObserver(cell.drawingView!)
+            cell.canvasView.becomeFirstResponder()
+             
+            cell.layer.borderColor = CGColor(red: 0, green: 0, blue: 1, alpha: 1)
+            cell.layer.borderWidth = 2
+            
+            cell.isActive = true
+            activeCell = cell
             aCell = cell
         }
         
-        toolPicker.addObserver(cell.canvasView)
+
+        cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:))))
+        
                     
         return cell
     }
+    
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer?) {
+        let cell: DrawingCell = sender?.view as! DrawingCell
+        if !cell.isActive {
+            
+            // Handling previous active cell
+            if let activeCell = activeCell {
+                // save drawing
+                let drawing = activeCell.drawingView!.drawing
+                letterDrawings[activeCell.letterLabel.text!] = drawing
+                activeCell.canvasView.image = drawing.image(from: CGRect(x: 0, y: 0, width: 100, height: 128), scale: 1)
+                
+                // show image
+                activeCell.canvasView.isHidden = false
+                
+                // clear drawing
+                activeCell.drawingView!.drawing = PKDrawing()
+                activeCell.drawingView = nil
+                activeCell.willRemoveSubview(activeCell.subviews[1])
+                
+                activeCell.layer.borderColor = UIColor.white.cgColor
+                activeCell.layer.borderWidth = 1
+                
+                activeCell.isActive = false
+            }
+            
+            cell.drawingView = PKCanvasView()
+            cell.insertSubview(cell.drawingView!, at: 1)
+            cell.drawingView!.frame = CGRect(x: 0, y: 0, width: 100, height: 128)
+            cell.drawingView!.backgroundColor = .clear
+            
+            // Handling new active cell
+            let draw = letterDrawings[cell.letterLabel.text!]
+            if draw != nil {
+                cell.drawingView!.drawing = draw!!
+            }
+            
+            cell.drawingView!.isHidden = false
+            cell.canvasView.isHidden = true
+            
+            
+            toolPickerResponderView = cell.drawingView
+            toolPicker.setVisible(true, forFirstResponder: toolPickerResponderView!)
+            cell.canvasView.becomeFirstResponder()
+            toolPicker.addObserver(cell.drawingView!)
+            
+            cell.layer.borderColor = CGColor(red: 0, green: 0, blue: 1, alpha: 1)
+            cell.layer.borderWidth = 2
+            
+            cell.isActive = true
+            activeCell = cell
+        }
+    }
+     
 }
+
+
 
 extension AddFontViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

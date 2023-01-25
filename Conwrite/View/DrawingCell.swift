@@ -11,21 +11,18 @@ import PencilKit
 class DrawingCell: UICollectionViewCell, PKCanvasViewDelegate {
 
         
-    @IBOutlet weak var canvasView: PKCanvasView!
     @IBOutlet weak var letterLabel: UILabel!
+    @IBOutlet weak var canvasView: UIImageView!
+    
+    var drawingView: PKCanvasView?
+    
+    var isActive: Bool = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        canvasView.delegate = self
-        
-        canvasView.alwaysBounceVertical = true
-        //canvasView.allowsFingerDrawing = true
-            
+        drawingView!.delegate = self
+        drawingView!.alwaysBounceVertical = true
     }
-    
-    
-
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
