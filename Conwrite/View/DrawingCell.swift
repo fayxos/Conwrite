@@ -8,20 +8,15 @@
 import UIKit
 import PencilKit
 
-class DrawingCell: UICollectionViewCell, PKCanvasViewDelegate {
+class DrawingCell: UICollectionViewCell {
 
-        
     @IBOutlet weak var letterLabel: UILabel!
     @IBOutlet weak var canvasView: UIImageView!
     
-    var drawingView: PKCanvasView?
-    
-    var isActive: Bool = false
+    var isActive = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        drawingView!.delegate = self
-        drawingView!.alwaysBounceVertical = true
     }
     
     required init?(coder aDecoder: NSCoder) {

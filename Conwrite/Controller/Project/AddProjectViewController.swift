@@ -10,6 +10,7 @@ import PencilKit
 import Vision
 import VisionKit
 import PDFKit
+import StoreKit
 
 protocol projectDelegate {
     func updateProjectView(project: Project)
@@ -41,6 +42,8 @@ class AddProjectViewController: UIViewController {
     
     var toolPicker: PKToolPicker = PKToolPicker()
     var toolPickerResponderView: PKCanvasView?
+    
+    var wasEdited = false
     
     var drawingIsEditing: Bool = true {
         didSet {
@@ -113,6 +116,17 @@ class AddProjectViewController: UIViewController {
                 }
             }
             selectedProject = nil
+        } else {
+            var names: [String] = []
+            for p in projects {
+                names.append(p.name)
+            }
+            
+            var i = 2
+            while(names.contains(projectNameTextField.text!)) {
+                projectNameTextField.text = "New Project" + String(i)
+                i += 1
+            }
         }
         
         scrollView.backgroundColor = .none
@@ -390,6 +404,8 @@ class AddProjectViewController: UIViewController {
     }
     
     @objc func sizeSelectorValueChanged(_ sender: UISegmentedControl) {
+        wasEdited = true
+        
         switch sender.selectedSegmentIndex {
         case 0:
             letterSize = 0.3
@@ -407,6 +423,8 @@ class AddProjectViewController: UIViewController {
     }
     
     @objc func paperSelectorValueChanged(_ sender: UISegmentedControl) {
+        wasEdited = true
+        
         switch sender.selectedSegmentIndex {
         case 0:
             backgroundPaper = .Quad
@@ -421,10 +439,14 @@ class AddProjectViewController: UIViewController {
     
     //MARK: - Select Image Functions
     @objc func clearImage(_ : UIButton) {
+        wasEdited = true
+        
         imageView.image = UIImage(named: "placeholder")
     }
     
     @objc func selectImageFromGallery(_ sender : UIButton) {
+        wasEdited = true
+        
         sender.backgroundColor = .systemGray
         let vc = UIImagePickerController()
         vc.sourceType = .photoLibrary
@@ -433,6 +455,8 @@ class AddProjectViewController: UIViewController {
     }
     
     @objc func selectImageFromCamera(_ : UIButton) {
+        wasEdited = true
+        
         let vc = UIImagePickerController()
         vc.sourceType = .camera
         vc.delegate = self
@@ -440,12 +464,16 @@ class AddProjectViewController: UIViewController {
     }
     
     @objc func selectImageFromScan(_ : UIButton) {
+        wasEdited = true
+        
         let documentCameraViewController = VNDocumentCameraViewController()
         documentCameraViewController.delegate = self
         present(documentCameraViewController, animated: true)
     }
     
     @objc func clearText(_ : UIButton) {
+        wasEdited = true
+        
         textView.text = ""
     }
     
@@ -495,6 +523,8 @@ class AddProjectViewController: UIViewController {
     
     //MARK: - Generate Drawing
     @objc func generateDrawing(_ : UIButton) {
+        wasEdited = true
+        
         // Save changes to project
         if project == nil {
             project = Project(name: "", drawings: drawings)
@@ -531,6 +561,8 @@ class AddProjectViewController: UIViewController {
     
     //MARK: - page control value changed
     @objc private func pageControlDidChange(_ sender: UIPageControl) {
+        wasEdited = true
+        
         let current = sender.currentPage
         scrollView.setContentOffset(CGPoint(x: CGFloat(current) * view.frame.size.width, y: 0), animated: true)
     }
@@ -563,6 +595,8 @@ class AddProjectViewController: UIViewController {
     
     //MARK: - TF Editing Change
     @IBAction func textFiledEditingChanged(_ sender: UITextField) {
+        wasEdited = true
+        
         // Get all projects names
         var projectNames: [String] = []
         for p in projects {
@@ -595,6 +629,10 @@ class AddProjectViewController: UIViewController {
     
     //MARK: - BackButton
     @IBAction func backButtonTappeds(_ sender: UIButton) {
+        if !wasEdited {
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
         
         var message: String
         
@@ -622,12 +660,8 @@ class AddProjectViewController: UIViewController {
     //MARK: - BackButton
     @IBAction func deleteButtonTapped(_ sender: UIButton) {
         if project == nil {
-            let alert = UIAlertController(title: "Project wasn't created yet", message: "You can't delete a non-existing Project", preferredStyle: .alert)
-            
-            let confirm = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
-
-            alert.addAction(confirm)
-            present(alert, animated: true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
+            return
         } else {
             let alert = UIAlertController(title: "Delete this project?", message: "Can't be restored", preferredStyle: .alert)
             
@@ -724,10 +758,41 @@ class AddProjectViewController: UIViewController {
             project?.rawText = textView.text
         }
         
+        
+        // App Store Review ?
+        // If the app doesn't store the count, this returns 0.
+        var count = UserDefaults.standard.integer(forKey: "processCompletedCountKey")
+        count += 1
+        UserDefaults.standard.set(count, forKey: "processCompletedCountKey")
+        print("Process completed \(count) time(s).")
+
+        // Keep track of the most recent app version that prompts the user for a review.
+        let lastVersionPromptedForReview = UserDefaults.standard.string(forKey: "lastVersionPromptedForReviewKey")
+        
+        // Get the current bundle version for the app.
+        let infoDictionaryKey = kCFBundleVersionKey as String
+        guard let currentVersion = Bundle.main.object(forInfoDictionaryKey: infoDictionaryKey) as? String
+            else { fatalError("Expected to find a bundle version in the info dictionary.") }
+                
+         // Verify the user completes the process several times and doesn’t receive a prompt for this app version.
+         if count >= 2 && currentVersion != lastVersionPromptedForReview {
+             
+             Task { @MainActor [weak self] in
+                 // Delay for two seconds to avoid interrupting the person using the app.
+                 // Use the equation n * 10^9 to convert seconds to nanoseconds.
+                 try? await Task.sleep(nanoseconds: UInt64(2e9))
+                 if let windowScene = self?.navigationController?.topViewController?.view.window?.windowScene {
+                     SKStoreReviewController.requestReview(in: windowScene)
+                     UserDefaults.standard.set(currentVersion, forKey: "lastVersionPromptedForReviewKey")
+                }
+             }
+         }
+        
         // Save project
         project?.saveToDatabase()
         projectDelegate.updateProjectView(project: project!)
         dismiss(animated: true, completion: nil)
+        
     }
     
     //MARK: - showAlert
@@ -956,14 +1021,6 @@ extension AddProjectViewController: UICollectionViewDataSource {
 //MARK: - TV Delegate Extension
 extension AddProjectViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
+        wasEdited = true
     }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-    }
-
-}
-
-//MARK: - TV Delegate Extension
-extension AddProjectViewController: UITableViewDelegate {
-    
 }

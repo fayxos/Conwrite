@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -635,6 +635,7 @@
                             <constraint firstItem="m5I-9F-g0I" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="G9U-0E-g5a"/>
                             <constraint firstItem="hUd-Xv-FvW" firstAttribute="centerX" secondItem="Z2p-0U-DV3" secondAttribute="centerX" id="Jkx-KW-E8p"/>
                             <constraint firstItem="dTB-Hc-ACx" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="Jos-Ov-RE3"/>
+                            <constraint firstItem="jnN-fn-Jeh" firstAttribute="top" secondItem="m5I-9F-g0I" secondAttribute="bottom" id="MdY-lx-0hJ"/>
                             <constraint firstItem="Zr3-Uy-hbJ" firstAttribute="leading" secondItem="jV7-zn-WnO" secondAttribute="trailing" constant="10" id="S2q-lJ-ccO"/>
                             <constraint firstItem="jV7-zn-WnO" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="cyE-FX-D8H"/>
                             <constraint firstItem="jnN-fn-Jeh" firstAttribute="top" secondItem="m5I-9F-g0I" secondAttribute="bottom" constant="20" id="eTz-lW-GjE"/>
@@ -643,6 +644,7 @@
                             <constraint firstItem="jnN-fn-Jeh" firstAttribute="leading" secondItem="NUf-lC-KXR" secondAttribute="leading" id="mXZ-MU-5f6"/>
                             <constraint firstItem="jV7-zn-WnO" firstAttribute="leading" secondItem="dTB-Hc-ACx" secondAttribute="trailing" constant="10" id="mcI-gD-EMk"/>
                             <constraint firstItem="NUf-lC-KXR" firstAttribute="trailing" secondItem="jnN-fn-Jeh" secondAttribute="trailing" id="nw0-jr-Rsf"/>
+                            <constraint firstItem="jnN-fn-Jeh" firstAttribute="bottom" secondItem="NUf-lC-KXR" secondAttribute="bottom" id="vZX-Hx-goG"/>
                         </constraints>
                     </view>
                     <connections>
@@ -663,10 +665,10 @@
         <image name="pencil.slash" catalog="system" width="128" height="113"/>
         <image name="placeholder" width="231" height="307"/>
         <image name="plus" catalog="system" width="128" height="113"/>
-        <image name="trash" catalog="system" width="121" height="128"/>
+        <image name="trash" catalog="system" width="117" height="128"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="labelColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

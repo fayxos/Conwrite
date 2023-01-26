@@ -1,0 +1,1166 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2707
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;\red108\green121\blue134;\red31\green31\blue36;\red255\green255\blue255;
+\red252\green95\blue163;\red93\green216\blue255;\red65\green161\blue192;\red158\green241\blue221;\red208\green168\blue255;
+\red208\green168\blue255;\red252\green106\blue93;\red146\green161\blue177;\red208\green191\blue105;\red103\green183\blue164;
+\red103\green183\blue164;\red161\green103\blue230;\red161\green103\blue230;\red158\green241\blue221;}
+{\*\expandedcolortbl;;\csgenericrgb\c42394\c47462\c52518;\csgenericrgb\c12054\c12284\c14131;\csgenericrgb\c100000\c100000\c100000\c85000;
+\csgenericrgb\c98839\c37355\c63833;\csgenericrgb\c36295\c84643\c99897;\csgenericrgb\c25490\c63137\c75294;\csgenericrgb\c61961\c94510\c86667;\csgenericrgb\c81569\c65882\c100000;
+\csgenericrgb\c81681\c65692\c99927;\csgenericrgb\c98912\c41558\c36568;\csgenericrgb\c57255\c63137\c69412;\csgenericrgb\c81498\c74939\c41233;\csgenericrgb\c40392\c71765\c64314;
+\csgenericrgb\c40538\c71705\c64209;\csgenericrgb\c63232\c40219\c90115;\csgenericrgb\c63137\c40392\c90196;\csgenericrgb\c62145\c94386\c86819;}
+\paperw12240\paperh15840\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\deftab642
+\pard\tx642\pardeftab642\pardirnatural\partightenfactor0
+
+\f0\fs26 \cf2 \cb3 //\cf4 \
+\cf2 //  AddFontViewController.swift\cf4 \
+\cf2 //  Handwritting\cf4 \
+\cf2 //\cf4 \
+\cf2 //  Created by Felix Haag on 07.08.21.\cf4 \
+\cf2 //\cf4 \
+\
+
+\f1\b \cf5 import
+\f0\b0 \cf4  UIKit\
+
+\f1\b \cf5 import
+\f0\b0 \cf4  PencilKit\
+\
+
+\f1\b \cf5 protocol
+\f0\b0 \cf4  \cf6 fontDelegate\cf4  \{\
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 updateFontView\cf4 (\cf7 font\cf4 : \cf8 Font\cf4 )\
+\}\
+\
+\
+\
+
+\f1\b \cf5 class
+\f0\b0 \cf4  \cf6 AddFontViewController\cf4 : \cf9 UIViewController\cf4 , \cf9 PKToolPickerObserver\cf4  \{\
+\
+    
+\f1\b \cf5 private
+\f0\b0 \cf4  
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 myKey\cf4 : \cf10 String\cf4  = \cf11 "myKey"\cf4 \
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - Outlets
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBOutlet
+\f0\b0 \cf4  
+\f1\b \cf5 weak
+\f0\b0 \cf4  
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 fontNameTextField\cf4 : \cf9 UITextField\cf4 !\
+    
+\f1\b \cf5 @IBOutlet
+\f0\b0 \cf4  
+\f1\b \cf5 weak
+\f0\b0 \cf4  
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 drawingsCollectionView\cf4 : \cf9 UICollectionView\cf4 !\
+    
+\f1\b \cf5 @IBOutlet
+\f0\b0 \cf4  
+\f1\b \cf5 weak
+\f0\b0 \cf4  
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 pencilButton\cf4 : \cf9 UIButton\cf4 !\
+\
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 currentLetterPaths\cf4 : [\cf10 String\cf4 : \cf10 URL\cf4 ] = [:]\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - Attributes
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 createPaths\cf4 () \{\
+        
+\f1\b \cf5 var
+\f0\b0 \cf4  i = \cf13 0\cf4 \
+        
+\f1\b \cf5 for
+\f0\b0 \cf4  l 
+\f1\b \cf5 in
+\f0\b0 \cf4  \cf8 Letter\cf4 .\cf14 getLetters\cf4 () \{\
+            \cf15 currentLetterPaths\cf4 [l] = \cf9 FileManager\cf4 .\cf16 default\cf4 .\cf17 urls\cf4 (\cf17 for\cf4 : .\cf16 documentDirectory\cf4 , \cf17 in\cf4 : .\cf16 userDomainMask\cf4 ).\cf17 first\cf4 ?.\cf17 appendingPathComponent\cf4 (\cf11 "\cf4 \\(i)\cf11 .plist"\cf4 )\
+            \
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  encoder = \cf9 PropertyListEncoder\cf4 ()\
+            
+\f1\b \cf5 do
+\f0\b0 \cf4  \{\
+                
+\f1\b \cf5 try
+\f0\b0 \cf4  encoder.\cf17 encode\cf4 (\cf10 PKDrawing\cf4 ()).\cf17 write\cf4 (\cf17 to\cf4 : \cf15 currentLetterPaths\cf4 [l]!)\
+            \} 
+\f1\b \cf5 catch
+\f0\b0 \cf4  \{\
+                \cf17 print\cf4 (\cf11 "Error: \cf4 \\(error)\cf11 "\cf4 )\
+            \}\
+        \}\
+        \
+        \
+    \}\
+    \
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 getDrawingForLetter\cf4 (\cf7 letter\cf4 : \cf10 String\cf4 ) -> \cf10 PKDrawing\cf4 ? \{\
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  
+\f1\b \cf5 let
+\f0\b0 \cf4  data = 
+\f1\b \cf5 try
+\f0\b0 \cf4 ? \cf10 Data\cf4 (\cf17 contentsOf\cf4 : \cf15 currentLetterPaths\cf4 [letter]!) \{\
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  decoder = \cf9 PropertyListDecoder\cf4 ()\
+            \
+            
+\f1\b \cf5 do
+\f0\b0 \cf4  \{\
+                
+\f1\b \cf5 return
+\f0\b0 \cf4  
+\f1\b \cf5 try
+\f0\b0 \cf4  decoder.\cf17 decode\cf4 (\cf10 PKDrawing\cf4 ?.
+\f1\b \cf5 self
+\f0\b0 \cf4 , \cf17 from\cf4 : data)\
+            \} 
+\f1\b \cf5 catch
+\f0\b0 \cf4  \{\
+                \cf17 print\cf4 (\cf11 "Error: \cf4 \\(error)\cf11 "\cf4 )\
+            \}\
+        \}\
+        \
+        
+\f1\b \cf5 return
+\f0\b0 \cf4  
+\f1\b \cf5 nil
+\f0\b0 \cf4 \
+    \}\
+\
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 setDrawingForLetter\cf4 (\cf7 drawing\cf4 : \cf10 PKDrawing\cf4 , \cf7 letter\cf4 : \cf10 String\cf4 ) \{\
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  encoder = \cf9 PropertyListEncoder\cf4 ()\
+        
+\f1\b \cf5 do
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 try
+\f0\b0 \cf4  encoder.\cf17 encode\cf4 (drawing).\cf17 write\cf4 (\cf17 to\cf4 : \cf15 currentLetterPaths\cf4 [letter]!)\
+        \} 
+\f1\b \cf5 catch
+\f0\b0 \cf4  \{\
+            \cf17 print\cf4 (\cf11 "Error: \cf4 \\(error)\cf11 "\cf4 )\
+        \}\
+    \}\
+\
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 getAllLetterDrawings\cf4 () -> [\cf10 String\cf4 : \cf10 PKDrawing\cf4 ?] \{\
+        
+\f1\b \cf5 var
+\f0\b0 \cf4  drawings: [\cf10 String\cf4 : \cf10 PKDrawing\cf4 ?] = [:]\
+        \
+        
+\f1\b \cf5 for
+\f0\b0 \cf4  l 
+\f1\b \cf5 in
+\f0\b0 \cf4  \cf8 Letter\cf4 .\cf14 getLetters\cf4 () \{\
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  
+\f1\b \cf5 let
+\f0\b0 \cf4  data = 
+\f1\b \cf5 try
+\f0\b0 \cf4 ? \cf10 Data\cf4 (\cf17 contentsOf\cf4 : \cf15 currentLetterPaths\cf4 [l]!) \{\
+                
+\f1\b \cf5 let
+\f0\b0 \cf4  decoder = \cf9 PropertyListDecoder\cf4 ()\
+                \
+                
+\f1\b \cf5 do
+\f0\b0 \cf4  \{\
+                    drawings[l] = 
+\f1\b \cf5 try
+\f0\b0 \cf4  decoder.\cf17 decode\cf4 (\cf10 PKDrawing\cf4 ?.
+\f1\b \cf5 self
+\f0\b0 \cf4 , \cf17 from\cf4 : data)\
+                \} 
+\f1\b \cf5 catch
+\f0\b0 \cf4  \{\
+                    \cf17 print\cf4 (\cf11 "Error: \cf4 \\(error)\cf11 "\cf4 )\
+                \}\
+            \} 
+\f1\b \cf5 else
+\f0\b0 \cf4  \{\
+                drawings[l] = 
+\f1\b \cf5 nil
+\f0\b0 \cf4 \
+            \}\
+        \}\
+        \
+        
+\f1\b \cf5 return
+\f0\b0 \cf4  drawings\
+    \}\
+    \
+    \cf2 /*\cf4 \
+\cf2     var letterDrawings: [String: PKDrawing?] = [:]\cf4 \
+\cf2     \{\cf4 \
+\cf2         set \{\cf4 \
+\cf2             let encoder = PropertyListEncoder()\cf4 \
+\cf2             do \{\cf4 \
+\cf2                 try encoder.encode(newValue).write(to: letterDrawingsPath!)\cf4 \
+\cf2             \} catch \{\cf4 \
+\cf2                 print("Error: \\(error)")\cf4 \
+\cf2             \}\cf4 \
+\cf2         \}\cf4 \
+\cf2         get \{\cf4 \
+\cf2             if let data = try? Data(contentsOf: letterDrawingsPath!) \{\cf4 \
+\cf2                 let decoder = PropertyListDecoder()\cf4 \
+\cf2                 \cf4 \
+\cf2                 do \{\cf4 \
+\cf2                     return try decoder.decode([String: PKDrawing?].self, from: data)\cf4 \
+\cf2                 \} catch \{\cf4 \
+\cf2                     print("Error: \\(error)")\cf4 \
+\cf2                 \}\cf4 \
+\cf2             \}\cf4 \
+\
+\cf2             return [:]\cf4 \
+\cf2         \}\cf4 \
+\cf2     \}\cf4 \
+\cf2      */\cf4 \
+    \
+    \
+    \cf2 //= Letter.getEmptyLetterArray()\cf4 \
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 letters\cf4 : [\cf10 String\cf4 ] = \cf8 Letter\cf4 .\cf14 getLetters\cf4 ()\
+    \
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 font\cf4 : \cf8 Font\cf4 ? = 
+\f1\b \cf5 nil
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 let
+\f0\b0 \cf4  \cf7 fonts\cf4 : [\cf8 Font\cf4 ] = \cf8 Font\cf4 .\cf14 loadFonts\cf4 ()\
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 fontDelegate\cf4 : \cf15 fontDelegate\cf4 !\
+        \
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 toolPicker\cf4 : \cf9 PKToolPicker\cf4  = \cf9 PKToolPicker\cf4 ()\
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 toolPickerResponderView\cf4 : \cf9 PKCanvasView\cf4 ?\
+    \
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 activeCell\cf4 : \cf8 DrawingCell\cf4 ?\
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 aCell\cf4 : \cf8 DrawingCell\cf4 ?\
+    \
+    
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 drawingIsEditing\cf4 : \cf10 Bool\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4  \{\
+        
+\f1\b \cf5 didSet
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 drawingIsEditing\cf4  \{\
+                \cf15 pencilButton\cf4 .\cf17 setImage\cf4 (\cf9 UIImage\cf4 (\cf17 systemName\cf4 : \cf11 "pencil.slash"\cf4 ), \cf17 for\cf4 : .\cf16 normal\cf4 )\
+            \} 
+\f1\b \cf5 else
+\f0\b0 \cf4  \{\
+                \cf15 pencilButton\cf4 .\cf17 setImage\cf4 (\cf9 UIImage\cf4 (\cf17 systemName\cf4 : \cf11 "pencil"\cf4 ), \cf17 for\cf4 : .\cf16 normal\cf4 )\
+            \}\
+            \cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (\cf15 drawingIsEditing\cf4 , \cf17 forFirstResponder\cf4 : \cf15 toolPickerResponderView\cf4 !)\
+            \cf15 toolPickerResponderView\cf4 ?.\cf17 becomeFirstResponder\cf4 ()\
+        \}\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - ViewDidLoad
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 override
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 viewDidLoad\cf4 () \{\
+        
+\f1\b \cf5 super
+\f0\b0 \cf4 .\cf17 viewDidLoad\cf4 ()\
+        \
+        \cf2 //letterDrawings = Letter.getEmptyLetterArray()\cf4 \
+        \cf14 createPaths\cf4 ()\
+        \
+        \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 cornerRadius\cf4  = \cf13 10\cf4 \
+        \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderWidth\cf4  = \cf13 1\cf4 \
+        \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 white\cf4 .\cf16 cgColor\cf4 \
+        \
+        \cf15 drawingsCollectionView\cf4 .\cf16 delegate\cf4  = 
+\f1\b \cf5 self
+\f0\b0 \cf4 \
+        \cf15 drawingsCollectionView\cf4 .\cf16 dataSource\cf4  = 
+\f1\b \cf5 self
+\f0\b0 \cf4 \
+        \cf15 drawingsCollectionView\cf4 .\cf16 isEditing\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+        \
+        \cf15 pencilButton\cf4 .\cf17 setImage\cf4 (\cf9 UIImage\cf4 (\cf17 systemName\cf4 : \cf11 "pencil.slash"\cf4 ), \cf17 for\cf4 : .\cf16 normal\cf4 )\
+        \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 selectedFont\cf4  != 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            \cf15 font\cf4  = \cf15 selectedFont\cf4 \
+            \cf15 fontNameTextField\cf4 .\cf16 text\cf4  = \cf15 font\cf4 ?.\cf15 name\cf4 \
+            
+\f1\b \cf5 for
+\f0\b0 \cf4  (key, value) 
+\f1\b \cf5 in
+\f0\b0 \cf4  \cf15 font\cf4 !.\cf15 characters\cf4  \{\
+                \cf14 setDrawingForLetter\cf4 (\cf14 drawing\cf4 : value, \cf14 letter\cf4 : key)\
+            \}\
+            \cf15 selectedFont\cf4  = 
+\f1\b \cf5 nil
+\f0\b0 \cf4 \
+        \}\
+    \}\
+    \
+    \cf2 /*\cf4 \
+\cf2     func getLetter(letter: String) -> PKDrawing? \{\cf4 \
+\cf2         if let data = try? Data(contentsOf: letterDrawingsPath!) \{\cf4 \
+\cf2             let decoder = PropertyListDecoder()\cf4 \
+\cf2             \cf4 \
+\cf2             do \{\cf4 \
+\cf2                 return try decoder.decode([String: PKDrawing?].self, from: data)[letter]!\cf4 \
+\cf2             \} catch \{\cf4 \
+\cf2                 print("Error: \\(error)")\cf4 \
+\cf2             \}\cf4 \
+\cf2         \}\cf4 \
+\
+\cf2         return nil\cf4 \
+\cf2     \}\cf4 \
+\cf2     \cf4 \
+\cf2     func setLetter(letter: String, drawing: PKDrawing) \{\cf4 \
+\cf2         let encoder = PropertyListEncoder()\cf4 \
+\cf2         do \{\cf4 \
+\cf2             let decoder = PropertyListDecoder()\cf4 \
+\cf2             \cf4 \
+\cf2             do \{\cf4 \
+\cf2                 return try decoder.decode([String: PKDrawing?].self, from: data)[letter]!\cf4 \
+\cf2             \} catch \{\cf4 \
+\cf2                 print("Error: \\(error)")\cf4 \
+\cf2             \}\cf4 \
+\cf2             let data = try encoder.encode()\cf4 \
+\cf2             try data.write(to: letterDrawingsPath!)\cf4 \
+\cf2         \} catch \{\cf4 \
+\cf2             print("Error: \\(error)")\cf4 \
+\cf2         \}\cf4 \
+\cf2     \}\cf4 \
+\cf2      */\cf4 \
+    \
+    
+\f1\b \cf5 override
+\f0\b0 \cf4  
+\f1\b \cf5 var
+\f0\b0 \cf4  \cf7 prefersHomeIndicatorAutoHidden\cf4 : \cf10 Bool\cf4  \{\
+        
+\f1\b \cf5 return
+\f0\b0 \cf4  
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - TouchesBegan
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 override
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 touchesBegan\cf4 (\cf7 _\cf4  touches: \cf10 Set\cf4 <\cf9 UITouch\cf4 >, \cf7 with\cf4  event: \cf9 UIEvent\cf4 ?) \{\
+        \cf16 view\cf4 .\cf17 endEditing\cf4 (
+\f1\b \cf5 true
+\f0\b0 \cf4 )\
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 toolPicker\cf4 .\cf16 isVisible\cf4  == 
+\f1\b \cf5 false
+\f0\b0 \cf4  \{\
+            \cf15 drawingIsEditing\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+        \}\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - TF EditingBegan
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBAction
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 textFieldEditingBegan\cf4 (\cf7 _\cf4  sender: 
+\f1\b \cf5 Any
+\f0\b0 \cf4 ) \{\
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 drawingIsEditing\cf4  == 
+\f1\b \cf5 true
+\f0\b0 \cf4  \{\
+            \cf15 pencilButton\cf4 .\cf17 setImage\cf4 (\cf9 UIImage\cf4 (\cf17 systemName\cf4 : \cf11 "pencil"\cf4 ), \cf17 for\cf4 : .\cf16 normal\cf4 )\
+        \}\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - TF EditingDidChange
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBAction
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 textFieldEditingDidChange\cf4 (\cf7 _\cf4  sender: \cf9 UITextField\cf4 ) \{\
+        \cf2 // Get all font names\cf4 \
+        
+\f1\b \cf5 var
+\f0\b0 \cf4  fontNames: [\cf10 String\cf4 ] = []\
+        
+\f1\b \cf5 for
+\f0\b0 \cf4  f 
+\f1\b \cf5 in
+\f0\b0 \cf4  \cf15 fonts\cf4  \{\
+            fontNames.\cf17 append\cf4 (f.\cf15 name\cf4 )\
+        \}\
+        \
+        \cf2 // Check if name is nil\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 fontNameTextField\cf4 .\cf16 text\cf4  == 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 red\cf4 .\cf16 cgColor\cf4 \
+            
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+        \}\
+        \
+        \cf2 // Check if name is empty or not unique\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 fontNameTextField\cf4 .\cf16 text\cf4 !.\cf16 isEmpty\cf4  || \cf15 fontNameTextField\cf4 .\cf16 text\cf4 ?.\cf17 first\cf4  == \cf11 " "\cf4  || fontNames.\cf17 contains\cf4 (\cf15 fontNameTextField\cf4 .\cf16 text\cf4 !) \{\
+            \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 red\cf4 .\cf16 cgColor\cf4 \
+            
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+        \}\
+        \
+        \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 white\cf4 .\cf16 cgColor\cf4 \
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - TF EditingDidEnd
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBAction
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 textFieldEditingDidEnd\cf4 (\cf7 _\cf4  sender: \cf9 UITextField\cf4 ) \{\
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 drawingIsEditing\cf4  == 
+\f1\b \cf5 true
+\f0\b0 \cf4  \{\
+            \cf15 pencilButton\cf4 .\cf17 setImage\cf4 (\cf9 UIImage\cf4 (\cf17 systemName\cf4 : \cf11 "pencil.slash"\cf4 ), \cf17 for\cf4 : .\cf16 normal\cf4 )\
+            \cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 forFirstResponder\cf4 : \cf15 toolPickerResponderView\cf4 !)\
+            \cf15 toolPickerResponderView\cf4 ?.\cf17 becomeFirstResponder\cf4 ()\
+        \}\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - SwapEditingButton
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBAction
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 swapEditingButtonTapped\cf4 (\cf7 _\cf4  sender: \cf9 UIButton\cf4 ) \{\
+        \cf15 drawingIsEditing\cf4  = !\cf15 drawingIsEditing\cf4 \
+        \
+        \
+        \
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - BackButton
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBAction
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 backButtonTapped\cf4 (\cf7 _\cf4  sender: \cf9 UIButton\cf4 ) \{\
+        \cf17 print\cf4 (\cf11 "Back button Tapped"\cf4 )\
+        \
+        \cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (
+\f1\b \cf5 false
+\f0\b0 \cf4 , \cf17 forFirstResponder\cf4 : \cf15 toolPickerResponderView\cf4 !)\
+        \cf15 toolPickerResponderView\cf4 ?.\cf17 becomeFirstResponder\cf4 ()\
+        \
+        
+\f1\b \cf5 var
+\f0\b0 \cf4  message: \cf10 String\cf4 \
+        \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 font\cf4  == 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            message = \cf11 "Handwriting wasn't saved yet!"\cf4 \
+        \} 
+\f1\b \cf5 else
+\f0\b0 \cf4  \{\
+            message = \cf11 "All changes get lost!"\cf4 \
+        \}\
+        \
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  alert = \cf9 UIAlertController\cf4 (\cf17 title\cf4 : \cf11 "Really want to return?"\cf4 , \cf17 message\cf4 : message, \cf17 preferredStyle\cf4 : .\cf16 alert\cf4 )\
+        \
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  cancel = \cf9 UIAlertAction\cf4 (\cf17 title\cf4 : \cf11 "Cancel"\cf4 , \cf17 style\cf4 : .\cf16 cancel\cf4 ) \{ [
+\f1\b \cf5 self
+\f0\b0 \cf4 ] (action) 
+\f1\b \cf5 in
+\f0\b0 \cf4 \
+            
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 forFirstResponder\cf4 : 
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 toolPickerResponderView\cf4 !)\
+            
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 toolPickerResponderView\cf4 ?.\cf17 becomeFirstResponder\cf4 ()\
+        \}\
+        \
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  confirm = \cf9 UIAlertAction\cf4 (\cf17 title\cf4 : \cf11 "Yes"\cf4 , \cf17 style\cf4 : .\cf16 destructive\cf4 ) \{ (action) 
+\f1\b \cf5 in
+\f0\b0 \cf4 \
+            
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf17 dismiss\cf4 (\cf17 animated\cf4 : 
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 completion\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+        \}\
+        \
+        alert.\cf17 addAction\cf4 (cancel)\
+        alert.\cf17 addAction\cf4 (confirm)\
+        \cf17 present\cf4 (alert, \cf17 animated\cf4 : 
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 completion\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - DeleteButton
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBAction
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 deleteButtonTapped\cf4 (\cf7 _\cf4  sender: \cf9 UIButton\cf4 ) \{\
+        \
+        \cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (
+\f1\b \cf5 false
+\f0\b0 \cf4 , \cf17 forFirstResponder\cf4 : \cf15 toolPickerResponderView\cf4 !)\
+        \cf15 toolPickerResponderView\cf4 ?.\cf17 becomeFirstResponder\cf4 ()\
+        \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 font\cf4  == 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  alert = \cf9 UIAlertController\cf4 (\cf17 title\cf4 : \cf11 "Handwriting wasn't created yet"\cf4 , \cf17 message\cf4 : \cf11 "You can't delete a non-existing Handwriting"\cf4 , \cf17 preferredStyle\cf4 : .\cf16 alert\cf4 )\
+            \
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  confirm = \cf9 UIAlertAction\cf4 (\cf17 title\cf4 : \cf11 "Ok"\cf4 , \cf17 style\cf4 : .\cf16 cancel\cf4 , \cf17 handler\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+\
+            alert.\cf17 addAction\cf4 (confirm)\
+            \cf17 present\cf4 (alert, \cf17 animated\cf4 : 
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 completion\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+        \} 
+\f1\b \cf5 else
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  alert = \cf9 UIAlertController\cf4 (\cf17 title\cf4 : \cf11 "Delete this font?"\cf4 , \cf17 message\cf4 : \cf11 "Can't be restored"\cf4 , \cf17 preferredStyle\cf4 : .\cf16 alert\cf4 )\
+            \
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  cancel = \cf9 UIAlertAction\cf4 (\cf17 title\cf4 : \cf11 "Cancel"\cf4 , \cf17 style\cf4 : .\cf16 cancel\cf4 )  \{ [
+\f1\b \cf5 self
+\f0\b0 \cf4 ] (action) 
+\f1\b \cf5 in
+\f0\b0 \cf4 \
+                
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 forFirstResponder\cf4 : 
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 toolPickerResponderView\cf4 !)\
+                
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 toolPickerResponderView\cf4 ?.\cf17 becomeFirstResponder\cf4 ()\
+            \}\
+            \
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  confirm = \cf9 UIAlertAction\cf4 (\cf17 title\cf4 : \cf11 "Delete"\cf4 , \cf17 style\cf4 : .\cf16 destructive\cf4 ) \{ (action) 
+\f1\b \cf5 in
+\f0\b0 \cf4 \
+                
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 font\cf4 ?.\cf14 deleteFromDatabase\cf4 ()\
+                
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 fontDelegate\cf4 .\cf14 updateFontView\cf4 (\cf14 font\cf4 : 
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf15 font\cf4 !)\
+                
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf17 dismiss\cf4 (\cf17 animated\cf4 : 
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 completion\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+            \}\
+            \
+            alert.\cf17 addAction\cf4 (cancel)\
+            alert.\cf17 addAction\cf4 (confirm)\
+            \cf17 present\cf4 (alert, \cf17 animated\cf4 : 
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 completion\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+        \}\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - SaveButton
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 @IBAction
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 saveButtonTapped\cf4 (\cf7 _\cf4  sender: \cf9 UIButton\cf4 ) \{\
+        \cf2 // Get all font names\cf4 \
+        
+\f1\b \cf5 var
+\f0\b0 \cf4  fontNames: [\cf10 String\cf4 ] = []\
+        
+\f1\b \cf5 for
+\f0\b0 \cf4  f 
+\f1\b \cf5 in
+\f0\b0 \cf4  \cf15 fonts\cf4  \{\
+            fontNames.\cf17 append\cf4 (f.\cf15 name\cf4 )\
+        \}\
+        \
+        \cf2 // Check if name is nil\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 fontNameTextField\cf4 .\cf16 text\cf4  == 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 red\cf4 .\cf16 cgColor\cf4 \
+            \cf14 showErrorAlert\cf4 (\cf14 errorType\cf4 : .\cf15 Name\cf4 )\
+            
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+        \}\
+        \
+        \cf2 // Check if name is empty\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 fontNameTextField\cf4 .\cf16 text\cf4 !.\cf16 isEmpty\cf4  || \cf15 fontNameTextField\cf4 .\cf16 text\cf4 ?.\cf17 first\cf4  == \cf11 " "\cf4 \{\
+            \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 red\cf4 .\cf16 cgColor\cf4 \
+            \cf14 showErrorAlert\cf4 (\cf14 errorType\cf4 : .\cf15 Name\cf4 )\
+            
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+        \}\
+        \
+        \cf2 // Check if name is unique if new font\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 font\cf4  == 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  fontNames.\cf17 contains\cf4 (\cf15 fontNameTextField\cf4 .\cf16 text\cf4 !) \{\
+                \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 red\cf4 .\cf16 cgColor\cf4 \
+                \cf14 showErrorAlert\cf4 (\cf14 errorType\cf4 : .\cf15 Name\cf4 )\
+                
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+            \}\
+        \} 
+\f1\b \cf5 else
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 fontNameTextField\cf4 .\cf16 text\cf4  != \cf15 font\cf4 ?.\cf15 name\cf4  \{\
+                
+\f1\b \cf5 if
+\f0\b0 \cf4  fontNames.\cf17 contains\cf4 (\cf15 fontNameTextField\cf4 .\cf16 text\cf4 !) \{\
+                    \cf15 fontNameTextField\cf4 .\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 red\cf4 .\cf16 cgColor\cf4 \
+                    \cf14 showErrorAlert\cf4 (\cf14 errorType\cf4 : .\cf15 Name\cf4 )\
+                    
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+                \}\
+            \}\
+        \}\
+        \
+        \cf2 // Save active cell\cf4 \
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  visibleCells = \cf15 drawingsCollectionView\cf4 .\cf16 visibleCells\cf4 \
+        
+\f1\b \cf5 for
+\f0\b0 \cf4  cell 
+\f1\b \cf5 in
+\f0\b0 \cf4  visibleCells \{\
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  drawingCell = cell 
+\f1\b \cf5 as
+\f0\b0 \cf4 ! \cf8 DrawingCell\cf4 \
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  drawingCell.\cf15 isActive\cf4  \{\
+                \cf14 setDrawingForLetter\cf4 (\cf14 drawing\cf4 : drawingCell.\cf15 drawingView\cf4 !.\cf16 drawing\cf4 , \cf14 letter\cf4 : drawingCell.\cf15 letterLabel\cf4 .\cf16 text\cf4 !)\
+            \}\
+        \}\
+        \
+        \cf2 // Check if A canvas view has drawing\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  
+\f1\b \cf5 let
+\f0\b0 \cf4  drawing = \cf14 getDrawingForLetter\cf4 (\cf14 letter\cf4 : \cf11 "A"\cf4 ) \{\
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  drawing.\cf16 bounds\cf4 .\cf16 height\cf4  == \cf13 0\cf4  && drawing.\cf16 bounds\cf4 .\cf16 width\cf4  == \cf13 0\cf4  \{\
+                \cf15 aCell\cf4 ?.\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 red\cf4 .\cf16 cgColor\cf4 \
+                \cf14 showErrorAlert\cf4 (\cf14 errorType\cf4 : .\cf15 Empty\cf4 )\
+                
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+            \}\
+        \} 
+\f1\b \cf5 else
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 return
+\f0\b0 \cf4 \
+        \}\
+        \
+        \
+        \cf2 // Save changes to font\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 font\cf4  == 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 var
+\f0\b0 \cf4  drawings: [\cf10 String\cf4 : \cf10 PKDrawing\cf4 ] = [:]\
+            
+\f1\b \cf5 for
+\f0\b0 \cf4  (key, _) 
+\f1\b \cf5 in
+\f0\b0 \cf4  \cf14 getAllLetterDrawings\cf4 () \{\
+                drawings[key] = \cf10 PKDrawing\cf4 ()\
+            \}\
+            \cf15 font\cf4  = \cf8 Font\cf4 (\cf14 name\cf4 : \cf15 fontNameTextField\cf4 .\cf16 text\cf4 !, \cf14 characters\cf4 : drawings)\
+        \} 
+\f1\b \cf5 else
+\f0\b0 \cf4  \{\
+            \cf15 font\cf4 ?.\cf15 name\cf4  = \cf15 fontNameTextField\cf4 .\cf16 text\cf4 !\
+        \}\
+        \
+        \
+        \cf2 // Store drawings in font\cf4 \
+        
+\f1\b \cf5 for
+\f0\b0 \cf4  (key, drawing) 
+\f1\b \cf5 in
+\f0\b0 \cf4  \cf14 getAllLetterDrawings\cf4 () \{\
+            \cf15 font\cf4 ?.\cf14 addCharacter\cf4 (\cf14 character\cf4 : key, \cf14 drawing\cf4 : drawing!)\
+        \}\
+        \
+        \
+        \cf2 // Save font\cf4 \
+        \cf15 font\cf4 ?.\cf14 saveToDatabase\cf4 ()\
+        \cf15 fontDelegate\cf4 .\cf14 updateFontView\cf4 (\cf14 font\cf4 : \cf15 font\cf4 !)\
+        \cf17 dismiss\cf4 (\cf17 animated\cf4 : 
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 completion\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - ErrorAlert
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 showErrorAlert\cf4 (\cf7 errorType\cf4 : \cf18 AddFontErrorType\cf4 ) \{\
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  alert = \cf9 UIAlertController\cf4 (\cf17 title\cf4 : \cf11 "Cuoldn't save Handwriting"\cf4 , \cf17 message\cf4 : errorType.\cf16 rawValue\cf4 , \cf17 preferredStyle\cf4 : .\cf16 alert\cf4 )\
+        \
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  confirm = \cf9 UIAlertAction\cf4 (\cf17 title\cf4 : \cf11 "Ok"\cf4 , \cf17 style\cf4 : .\cf16 cancel\cf4 , \cf17 handler\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+        \
+        alert.\cf17 addAction\cf4 (confirm)\
+        \cf17 present\cf4 (alert, \cf17 animated\cf4 : 
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 completion\cf4 : 
+\f1\b \cf5 nil
+\f0\b0 \cf4 )\
+    \}\
+    \
+    \cf2 //
+\f1\b \cf12 MARK: - ScrollViewBeginDragging
+\f0\b0 \cf4 \
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 scrollViewWillBeginDragging\cf4 (\cf7 _\cf4  scrollView: \cf9 UIScrollView\cf4 ) \{\
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  visibleCells = \cf15 drawingsCollectionView\cf4 .\cf16 visibleCells\cf4 \
+        
+\f1\b \cf5 for
+\f0\b0 \cf4  cell 
+\f1\b \cf5 in
+\f0\b0 \cf4  visibleCells \{\
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  drawingCell = cell 
+\f1\b \cf5 as
+\f0\b0 \cf4 ! \cf8 DrawingCell\cf4 \
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  drawingCell.\cf15 isActive\cf4  \{\
+                
+\f1\b \cf5 let
+\f0\b0 \cf4  drawing = drawingCell.\cf15 drawingView\cf4 !.\cf16 drawing\cf4 \
+                \cf14 setDrawingForLetter\cf4 (\cf14 drawing\cf4 : drawing, \cf14 letter\cf4 : drawingCell.\cf15 letterLabel\cf4 .\cf16 text\cf4 !)\
+                drawingCell.\cf15 canvasView\cf4 .\cf16 image\cf4  = drawing.\cf17 image\cf4 (\cf17 from\cf4 : \cf10 CGRect\cf4 (\cf10 x\cf4 : \cf13 0\cf4 , \cf10 y\cf4 : \cf13 0\cf4 , \cf10 width\cf4 : \cf13 100\cf4 , \cf10 height\cf4 : \cf13 128\cf4 ), \cf17 scale\cf4 : \cf13 1\cf4 )\
+                \
+                \cf2 // show image\cf4 \
+                drawingCell.\cf15 canvasView\cf4 .\cf16 isHidden\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+                \
+                \cf2 // clear drawing\cf4 \
+                drawingCell.\cf15 drawingView\cf4 !.\cf16 drawing\cf4  = \cf10 PKDrawing\cf4 ()\
+                drawingCell.\cf15 drawingView\cf4 !.\cf16 isHidden\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+                \
+                cell.\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 white\cf4 .\cf16 cgColor\cf4 \
+                drawingCell.\cf16 layer\cf4 .\cf16 borderWidth\cf4  = \cf13 1\cf4 \
+                \
+                drawingCell.\cf15 isActive\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+            \}\
+        \}\
+    \}\
+    \
+\}\
+\
+\cf2 //
+\f1\b \cf12 MARK: - CV Delegate Extension
+\f0\b0 \cf4 \
+
+\f1\b \cf5 extension
+\f0\b0 \cf4  \cf6 AddFontViewController\cf4 : \cf9 UICollectionViewDelegate\cf4  \{\
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 collectionView\cf4 (\cf7 _\cf4  collectionView: \cf9 UICollectionView\cf4 , \cf7 didSelectItemAt\cf4  indexPath: \cf10 IndexPath\cf4 ) \{\
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf15 toolPicker\cf4 .\cf16 isVisible\cf4  == 
+\f1\b \cf5 false
+\f0\b0 \cf4  \{\
+            \cf15 drawingIsEditing\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+        \}\
+    \}\
+\}\
+\
+\cf2 //
+\f1\b \cf12 MARK: - CV DataSource Extension
+\f0\b0 \cf4 \
+
+\f1\b \cf5 extension
+\f0\b0 \cf4  \cf6 AddFontViewController\cf4 : \cf9 UICollectionViewDataSource\cf4 , \cf9 PKCanvasViewDelegate\cf4  \{\
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 collectionView\cf4 (\cf7 _\cf4  collectionView: \cf9 UICollectionView\cf4 , \cf7 numberOfItemsInSection\cf4  section: \cf10 Int\cf4 ) -> \cf10 Int\cf4  \{\
+        
+\f1\b \cf5 return
+\f0\b0 \cf4  \cf15 letters\cf4 .\cf16 count\cf4 \
+    \}\
+    \
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 collectionView\cf4 (\cf7 _\cf4  collectionView: \cf9 UICollectionView\cf4 , \cf7 cellForItemAt\cf4  indexPath: \cf10 IndexPath\cf4 ) -> \cf9 UICollectionViewCell\cf4  \{\
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  cell = \cf15 drawingsCollectionView\cf4 .\cf17 dequeueReusableCell\cf4 (\cf17 withReuseIdentifier\cf4 : \cf11 "drawingCell"\cf4 , \cf17 for\cf4 : indexPath) 
+\f1\b \cf5 as
+\f0\b0 \cf4 ! \cf8 DrawingCell\cf4 \
+        \
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  character: \cf10 String\cf4  = \cf15 letters\cf4 [indexPath.\cf16 row\cf4 ]\
+        \
+        cell.\cf15 letterLabel\cf4 .\cf16 text\cf4  = character\
+                \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf14 getDrawingForLetter\cf4 (\cf14 letter\cf4 : character) != 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+            
+\f1\b \cf5 let
+\f0\b0 \cf4  drawing: \cf10 PKDrawing\cf4  = \cf14 getDrawingForLetter\cf4 (\cf14 letter\cf4 : character)!\
+            cell.\cf15 canvasView\cf4 .\cf16 image\cf4  = drawing.\cf17 image\cf4 (\cf17 from\cf4 : \cf10 CGRect\cf4 (\cf10 x\cf4 : \cf13 0\cf4 , \cf10 y\cf4 : \cf13 0\cf4 , \cf10 width\cf4 : \cf13 100\cf4 , \cf10 height\cf4 : \cf13 128\cf4 ), \cf17 scale\cf4 : \cf13 1\cf4 )\
+        \}\
+        \
+        cell.\cf15 canvasView\cf4 .\cf16 overrideUserInterfaceStyle\cf4  = .\cf16 dark\cf4 \
+        \
+        cell.\cf16 layer\cf4 .\cf16 cornerRadius\cf4  = \cf13 15\cf4 \
+        cell.\cf16 layer\cf4 .\cf16 borderWidth\cf4  = \cf13 1\cf4 \
+        cell.\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 white\cf4 .\cf16 cgColor\cf4 \
+        \
+        \cf2 // show image\cf4 \
+        cell.\cf15 canvasView\cf4 .\cf16 isHidden\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+        \
+        \
+        cell.\cf15 isActive\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+        \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  indexPath.\cf16 row\cf4  == \cf13 0\cf4  && cell.\cf15 letterLabel\cf4 .\cf16 text\cf4  == \cf11 "A"\cf4  \{\
+            \
+            cell.\cf15 drawingView\cf4  = \cf9 PKCanvasView\cf4 ()\
+            cell.\cf17 insertSubview\cf4 (cell.\cf15 drawingView\cf4 !, \cf17 at\cf4 : \cf13 1\cf4 )\
+            cell.\cf15 drawingView\cf4 !.\cf16 frame\cf4  = \cf10 CGRect\cf4 (\cf10 x\cf4 : \cf13 0\cf4 , \cf10 y\cf4 : \cf13 0\cf4 , \cf10 width\cf4 : \cf13 100\cf4 , \cf10 height\cf4 : \cf13 128\cf4 )\
+            cell.\cf15 drawingView\cf4 !.\cf16 backgroundColor\cf4  = .\cf16 clear\cf4 \
+            \
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf14 getDrawingForLetter\cf4 (\cf14 letter\cf4 : \cf11 "A"\cf4 ) != 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+                cell.\cf15 drawingView\cf4 !.\cf16 drawing\cf4  = \cf14 getDrawingForLetter\cf4 (\cf14 letter\cf4 : \cf11 "A"\cf4 )!\
+            \}\
+            \
+            \cf2 // Handling new active cell\cf4 \
+            cell.\cf15 drawingView\cf4 !.\cf16 isHidden\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+            cell.\cf15 canvasView\cf4 .\cf16 isHidden\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+                        \
+            \cf15 toolPickerResponderView\cf4  = cell.\cf15 drawingView\cf4 \
+            \cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 forFirstResponder\cf4 : \cf15 toolPickerResponderView\cf4 !)\
+            \cf15 toolPicker\cf4 .\cf17 addObserver\cf4 (cell.\cf15 drawingView\cf4 !)\
+            cell.\cf15 canvasView\cf4 .\cf17 becomeFirstResponder\cf4 ()\
+             \
+            cell.\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 CGColor\cf4 (\cf17 red\cf4 : \cf13 0\cf4 , \cf17 green\cf4 : \cf13 0\cf4 , \cf17 blue\cf4 : \cf13 1\cf4 , \cf17 alpha\cf4 : \cf13 1\cf4 )\
+            cell.\cf16 layer\cf4 .\cf16 borderWidth\cf4  = \cf13 2\cf4 \
+            \
+            cell.\cf15 isActive\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+            \cf15 activeCell\cf4  = cell\
+            \cf15 aCell\cf4  = cell\
+        \}\
+        \
+\
+        cell.\cf17 addGestureRecognizer\cf4 (\cf9 UITapGestureRecognizer\cf4 (\cf9 target\cf4 : 
+\f1\b \cf5 self
+\f0\b0 \cf4 , \cf9 action\cf4 : 
+\f1\b \cf5 #selector
+\f0\b0 \cf4 (
+\f1\b \cf5 self
+\f0\b0 \cf4 .\cf14 handleTap\cf4 (\cf14 _\cf4 :))))\
+        \
+                    \
+        
+\f1\b \cf5 return
+\f0\b0 \cf4  cell\
+    \}\
+    \
+    \
+    
+\f1\b \cf5 @objc
+\f0\b0 \cf4  
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 handleTap\cf4 (\cf7 _\cf4  sender: \cf9 UITapGestureRecognizer\cf4 ?) \{\
+        
+\f1\b \cf5 let
+\f0\b0 \cf4  cell: \cf8 DrawingCell\cf4  = sender?.\cf16 view\cf4  
+\f1\b \cf5 as
+\f0\b0 \cf4 ! \cf8 DrawingCell\cf4 \
+        
+\f1\b \cf5 if
+\f0\b0 \cf4  !cell.\cf15 isActive\cf4  \{\
+            \
+            \cf2 // Handling previous active cell\cf4 \
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  
+\f1\b \cf5 let
+\f0\b0 \cf4  activeCell = \cf15 activeCell\cf4  \{\
+                \cf2 // save drawing\cf4 \
+                
+\f1\b \cf5 let
+\f0\b0 \cf4  drawing = activeCell.\cf15 drawingView\cf4 !.\cf16 drawing\cf4 \
+                \cf14 setDrawingForLetter\cf4 (\cf14 drawing\cf4 : drawing, \cf14 letter\cf4 : activeCell.\cf15 letterLabel\cf4 .\cf16 text\cf4 !)\
+                activeCell.\cf15 canvasView\cf4 .\cf16 image\cf4  = drawing.\cf17 image\cf4 (\cf17 from\cf4 : \cf10 CGRect\cf4 (\cf10 x\cf4 : \cf13 0\cf4 , \cf10 y\cf4 : \cf13 0\cf4 , \cf10 width\cf4 : \cf13 100\cf4 , \cf10 height\cf4 : \cf13 128\cf4 ), \cf17 scale\cf4 : \cf13 1\cf4 )\
+                \
+                \cf2 // show image\cf4 \
+                activeCell.\cf15 canvasView\cf4 .\cf16 isHidden\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+                \
+                \cf2 // clear drawing\cf4 \
+                activeCell.\cf15 drawingView\cf4 !.\cf16 drawing\cf4  = \cf10 PKDrawing\cf4 ()\
+                activeCell.\cf15 drawingView\cf4  = 
+\f1\b \cf5 nil
+\f0\b0 \cf4 \
+                activeCell.\cf17 willRemoveSubview\cf4 (activeCell.\cf16 subviews\cf4 [\cf13 1\cf4 ])\
+                \
+                activeCell.\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 UIColor\cf4 .\cf16 white\cf4 .\cf16 cgColor\cf4 \
+                activeCell.\cf16 layer\cf4 .\cf16 borderWidth\cf4  = \cf13 1\cf4 \
+                \
+                activeCell.\cf15 isActive\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+            \}\
+            \
+            cell.\cf15 drawingView\cf4  = \cf9 PKCanvasView\cf4 ()\
+            cell.\cf17 insertSubview\cf4 (cell.\cf15 drawingView\cf4 !, \cf17 at\cf4 : \cf13 1\cf4 )\
+            cell.\cf15 drawingView\cf4 !.\cf16 frame\cf4  = \cf10 CGRect\cf4 (\cf10 x\cf4 : \cf13 0\cf4 , \cf10 y\cf4 : \cf13 0\cf4 , \cf10 width\cf4 : \cf13 100\cf4 , \cf10 height\cf4 : \cf13 128\cf4 )\
+            cell.\cf15 drawingView\cf4 !.\cf16 backgroundColor\cf4  = .\cf16 clear\cf4 \
+            \
+            \cf2 // Handling new active cell\cf4 \
+            
+\f1\b \cf5 if
+\f0\b0 \cf4  \cf14 getDrawingForLetter\cf4 (\cf14 letter\cf4 : cell.\cf15 letterLabel\cf4 .\cf16 text\cf4 !) != 
+\f1\b \cf5 nil
+\f0\b0 \cf4  \{\
+                cell.\cf15 drawingView\cf4 !.\cf16 drawing\cf4  = \cf14 getDrawingForLetter\cf4 (\cf14 letter\cf4 : cell.\cf15 letterLabel\cf4 .\cf16 text\cf4 !)!\
+            \}\
+            \
+            cell.\cf15 drawingView\cf4 !.\cf16 isHidden\cf4  = 
+\f1\b \cf5 false
+\f0\b0 \cf4 \
+            cell.\cf15 canvasView\cf4 .\cf16 isHidden\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+            \
+            \
+            \cf15 toolPickerResponderView\cf4  = cell.\cf15 drawingView\cf4 \
+            \cf15 toolPicker\cf4 .\cf17 setVisible\cf4 (
+\f1\b \cf5 true
+\f0\b0 \cf4 , \cf17 forFirstResponder\cf4 : \cf15 toolPickerResponderView\cf4 !)\
+            cell.\cf15 canvasView\cf4 .\cf17 becomeFirstResponder\cf4 ()\
+            \cf15 toolPicker\cf4 .\cf17 addObserver\cf4 (cell.\cf15 drawingView\cf4 !)\
+            \
+            cell.\cf16 layer\cf4 .\cf16 borderColor\cf4  = \cf9 CGColor\cf4 (\cf17 red\cf4 : \cf13 0\cf4 , \cf17 green\cf4 : \cf13 0\cf4 , \cf17 blue\cf4 : \cf13 1\cf4 , \cf17 alpha\cf4 : \cf13 1\cf4 )\
+            cell.\cf16 layer\cf4 .\cf16 borderWidth\cf4  = \cf13 2\cf4 \
+            \
+            cell.\cf15 isActive\cf4  = 
+\f1\b \cf5 true
+\f0\b0 \cf4 \
+            \cf15 activeCell\cf4  = cell\
+        \}\
+    \}\
+     \
+\}\
+\
+\
+\
+
+\f1\b \cf5 extension
+\f0\b0 \cf4  \cf6 AddFontViewController\cf4 : \cf9 UICollectionViewDelegateFlowLayout\cf4  \{\
+    
+\f1\b \cf5 func
+\f0\b0 \cf4  \cf7 collectionView\cf4 (\cf7 _\cf4  collectionView: \cf9 UICollectionView\cf4 , \cf7 layout\cf4  collectionViewLayout: \cf9 UICollectionViewLayout\cf4 , \cf7 sizeForItemAt\cf4  indexPath: \cf10 IndexPath\cf4 ) -> \cf10 CGSize\cf4  \{\
+        
+\f1\b \cf5 return
+\f0\b0 \cf4  \cf10 CGSize\cf4 (\cf17 width\cf4 : \cf13 100\cf4 , \cf17 height\cf4 : \cf13 128\cf4 )\
+    \}\
+\}\
+\
+}

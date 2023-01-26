@@ -18,6 +18,7 @@
 		DC79AD1F26BB095C00623DE2 /* TopBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC79AD1E26BB095C00623DE2 /* TopBarViewController.swift */; };
 		DC79AD2226BB0CC200623DE2 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC79AD2126BB0CC200623DE2 /* MainViewController.swift */; };
 		DC7C52AB26C2995100748FCE /* AddProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7C52AA26C2995100748FCE /* AddProjectViewController.swift */; };
+		DC7CE8482981AD02007B4CE2 /* MemoryTest.rtf in Resources */ = {isa = PBXBuildFile; fileRef = DC7CE8472981AD02007B4CE2 /* MemoryTest.rtf */; };
 		DC80E34526BE9BA1007DCC8B /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC80E34426BE9BA1007DCC8B /* Project.swift */; };
 		DC80E34726BE9C7D007DCC8B /* CustomEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC80E34626BE9C7D007DCC8B /* CustomEnums.swift */; };
 		DC80E34926BEA0BC007DCC8B /* ProjectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC80E34826BEA0BC007DCC8B /* ProjectCell.swift */; };
@@ -46,6 +47,7 @@
 		DC79AD2126BB0CC200623DE2 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		DC7B7F5D297DC80A00470530 /* Conwrite.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Conwrite.entitlements; sourceTree = "<group>"; };
 		DC7C52AA26C2995100748FCE /* AddProjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProjectViewController.swift; sourceTree = "<group>"; };
+		DC7CE8472981AD02007B4CE2 /* MemoryTest.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = MemoryTest.rtf; sourceTree = "<group>"; };
 		DC80E34426BE9BA1007DCC8B /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		DC80E34626BE9C7D007DCC8B /* CustomEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEnums.swift; sourceTree = "<group>"; };
 		DC80E34826BEA0BC007DCC8B /* ProjectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCell.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				DCEFE6D826BDCBFC00F9311B /* View */,
 				DC79AD1326BB057B00623DE2 /* Assets.xcassets */,
 				DC86F34C26C66CC3005094A9 /* NotUsedCode.rtf */,
+				DC7CE8472981AD02007B4CE2 /* MemoryTest.rtf */,
 				DCEFE6E026BDDEE400F9311B /* Extenions.swift */,
 				DC79AD1826BB057B00623DE2 /* Info.plist */,
 			);
@@ -216,6 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC79AD1726BB057B00623DE2 /* LaunchScreen.storyboard in Resources */,
+				DC7CE8482981AD02007B4CE2 /* MemoryTest.rtf in Resources */,
 				DC79AD1426BB057B00623DE2 /* Assets.xcassets in Resources */,
 				DC86F34D26C66CC3005094A9 /* NotUsedCode.rtf in Resources */,
 				DC79AD1226BB057900623DE2 /* Main.storyboard in Resources */,
