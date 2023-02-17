@@ -283,7 +283,7 @@ class AddProjectViewController: UIViewController {
         generateDrawingButton.layer.cornerRadius = 15
         generateDrawingButton.isUserInteractionEnabled = true
         generateDrawingButton.addTarget(self, action: #selector(generateDrawing(_:)), for: .touchUpInside)
-                
+                        
         // Add subviews
         startView.addSubview(imageLabel)
         startView.addSubview(textLabel)
@@ -397,6 +397,8 @@ class AddProjectViewController: UIViewController {
         pngButton.heightAnchor.constraint(equalTo: exportLabel.heightAnchor).isActive = true
         pngButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         pngButton.topAnchor.constraint(equalTo: exportLabel.topAnchor).isActive = true
+        
+        
     }
     
     @objc func stepperValueChanged(_ sender: UIStepper) {
