@@ -316,10 +316,12 @@ class AddProjectViewController: UIViewController {
         fontPickerCollection!.centerXAnchor.constraint(equalTo: startView.centerXAnchor).isActive = true
         fontPickerCollection!.topAnchor.constraint(equalTo: paperSelector.bottomAnchor, constant: 30).isActive = true
         
+        
         // Drawing View
         drawingView = UIView(frame: CGRect(x: view.frame.size.width, y: 0, width: view.frame.size.width, height: view.frame.size.height-200))
         drawingView.backgroundColor = .none
         drawingView.isUserInteractionEnabled = true
+        
         
         // Canvas Table View
         canvasTableView = UITableView()
@@ -378,6 +380,9 @@ class AddProjectViewController: UIViewController {
         drawingView.addSubview(pngButton)
         drawingView.addSubview(zoomView)
         
+        
+        
+        
         zoomView.topAnchor.constraint(equalTo: drawingView.topAnchor, constant: 50).isActive = true
         zoomView.centerXAnchor.constraint(equalTo: drawingView.centerXAnchor).isActive = true
         zoomView.heightAnchor.constraint(equalToConstant: drawingView.frame.size.height-40).isActive = true
@@ -397,7 +402,6 @@ class AddProjectViewController: UIViewController {
         pngButton.heightAnchor.constraint(equalTo: exportLabel.heightAnchor).isActive = true
         pngButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         pngButton.topAnchor.constraint(equalTo: exportLabel.topAnchor).isActive = true
-        
         
     }
     

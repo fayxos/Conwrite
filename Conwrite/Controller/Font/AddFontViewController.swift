@@ -24,7 +24,8 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
     @IBOutlet weak var fontNameTextField: UITextField!
     @IBOutlet weak var drawingsCollectionView: UICollectionView!
     @IBOutlet weak var pencilButton: UIButton!
-
+    //@IBOutlet weak var variationButton: UIButton!
+    
     var drawingView: PKCanvasView = PKCanvasView()
     
     //MARK: - Attributes

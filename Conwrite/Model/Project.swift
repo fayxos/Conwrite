@@ -57,7 +57,7 @@ class Project: Encodable, Decodable {
         case .Quad: // kariert, passt alles perfekt
             canvasHeight = canvasHeight - 10
             lineWidth = lineWidth - 10
-            lineHeight = 73.5 * 0.5
+            lineHeight = 73.5 * 0.25 // 0.5
             spaceWidth = 30 * practiceScale
             letterSpacing = 0.5
             startPosition = CGPoint(x: textMargin, y: 15)
