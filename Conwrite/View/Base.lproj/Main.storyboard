@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -203,7 +204,7 @@
                                 <color key="barTintColor" red="0.2235293984" green="0.21568629149999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </toolbar>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="73C-M1-DyF">
-                                <rect key="frame" x="0.0" y="79" width="760" height="894"/>
+                                <rect key="frame" x="0.0" y="79" width="760" height="874"/>
                                 <color key="backgroundColor" red="0.2235293984" green="0.21568629149999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="20" minimumInteritemSpacing="20" id="gp7-6E-QWX">
                                     <size key="itemSize" width="250" height="300"/>
@@ -625,21 +626,53 @@
                                     <action selector="swapEditingButtonTapped:" destination="h8s-lz-th6" eventType="touchUpInside" id="SfJ-Ca-oTO"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hHp-U4-fYd">
+                                <rect key="frame" x="135" y="44" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="MZu-nf-NC1"/>
+                                    <constraint firstAttribute="height" constant="50" id="YFh-TA-Z52"/>
+                                </constraints>
+                                <state key="normal" image="plus.circle.fill" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
+                                </state>
+                                <connections>
+                                    <action selector="addVariation:" destination="h8s-lz-th6" eventType="touchUpInside" id="HNf-Sn-O1M"/>
+                                    <action selector="swapEditingButtonTapped:" destination="h8s-lz-th6" eventType="touchUpInside" id="JZx-SN-Ewh"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D1i-Cw-fdF">
+                                <rect key="frame" x="185" y="44" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="Ca5-xw-Ql3"/>
+                                    <constraint firstAttribute="width" constant="50" id="vqz-io-Kga"/>
+                                </constraints>
+                                <state key="normal" image="minus.circle.fill" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
+                                </state>
+                                <connections>
+                                    <action selector="removeVariation:" destination="h8s-lz-th6" eventType="touchUpInside" id="mPp-qH-y8w"/>
+                                    <action selector="swapEditingButtonTapped:" destination="h8s-lz-th6" eventType="touchUpInside" id="RAW-cV-OmD"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="NUf-lC-KXR"/>
                         <color key="backgroundColor" red="1" green="0.8078432083" blue="0.38823530080000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="m5I-9F-g0I" firstAttribute="leading" secondItem="NUf-lC-KXR" secondAttribute="leading" constant="20" id="0L5-Nk-UQ0"/>
                             <constraint firstItem="Zr3-Uy-hbJ" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="30e-4D-IuA"/>
+                            <constraint firstItem="D1i-Cw-fdF" firstAttribute="leading" secondItem="hHp-U4-fYd" secondAttribute="trailing" id="3rf-cr-eDo"/>
                             <constraint firstItem="hUd-Xv-FvW" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="Cu3-h8-9OF"/>
                             <constraint firstItem="m5I-9F-g0I" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="G9U-0E-g5a"/>
                             <constraint firstItem="hUd-Xv-FvW" firstAttribute="centerX" secondItem="Z2p-0U-DV3" secondAttribute="centerX" id="Jkx-KW-E8p"/>
                             <constraint firstItem="dTB-Hc-ACx" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="Jos-Ov-RE3"/>
                             <constraint firstItem="jnN-fn-Jeh" firstAttribute="top" secondItem="m5I-9F-g0I" secondAttribute="bottom" id="MdY-lx-0hJ"/>
+                            <constraint firstItem="hHp-U4-fYd" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="Nmi-7l-Des"/>
                             <constraint firstItem="Zr3-Uy-hbJ" firstAttribute="leading" secondItem="jV7-zn-WnO" secondAttribute="trailing" constant="10" id="S2q-lJ-ccO"/>
+                            <constraint firstItem="D1i-Cw-fdF" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="YR1-L0-g0v"/>
                             <constraint firstItem="jV7-zn-WnO" firstAttribute="top" secondItem="NUf-lC-KXR" secondAttribute="top" constant="20" id="cyE-FX-D8H"/>
                             <constraint firstItem="jnN-fn-Jeh" firstAttribute="top" secondItem="m5I-9F-g0I" secondAttribute="bottom" constant="20" id="eTz-lW-GjE"/>
                             <constraint firstItem="NUf-lC-KXR" firstAttribute="bottom" secondItem="jnN-fn-Jeh" secondAttribute="bottom" id="eUu-wG-5mY"/>
+                            <constraint firstItem="hUd-Xv-FvW" firstAttribute="leading" secondItem="D1i-Cw-fdF" secondAttribute="trailing" constant="50" id="g5n-pG-VgI"/>
                             <constraint firstItem="NUf-lC-KXR" firstAttribute="trailing" secondItem="Zr3-Uy-hbJ" secondAttribute="trailing" constant="20" id="gQY-o0-8WK"/>
                             <constraint firstItem="jnN-fn-Jeh" firstAttribute="leading" secondItem="NUf-lC-KXR" secondAttribute="leading" id="mXZ-MU-5f6"/>
                             <constraint firstItem="jV7-zn-WnO" firstAttribute="leading" secondItem="dTB-Hc-ACx" secondAttribute="trailing" constant="10" id="mcI-gD-EMk"/>
@@ -648,9 +681,11 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="addVariationButton" destination="hHp-U4-fYd" id="tCw-Uc-pcw"/>
                         <outlet property="drawingsCollectionView" destination="jnN-fn-Jeh" id="h3B-X3-c64"/>
                         <outlet property="fontNameTextField" destination="hUd-Xv-FvW" id="HJZ-By-wBd"/>
                         <outlet property="pencilButton" destination="dTB-Hc-ACx" id="0V4-a0-Jfi"/>
+                        <outlet property="removeVariationButton" destination="D1i-Cw-fdF" id="EVx-1g-1Xk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Spq-YR-J9p" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -662,9 +697,11 @@
         <image name="FONT1" width="340" height="341"/>
         <image name="FontBackground" width="364" height="364"/>
         <image name="checkmark" catalog="system" width="128" height="114"/>
+        <image name="minus.circle.fill" catalog="system" width="128" height="123"/>
         <image name="pencil.slash" catalog="system" width="128" height="113"/>
         <image name="placeholder" width="231" height="307"/>
         <image name="plus" catalog="system" width="128" height="113"/>
+        <image name="plus.circle.fill" catalog="system" width="128" height="123"/>
         <image name="trash" catalog="system" width="117" height="128"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="labelColor">

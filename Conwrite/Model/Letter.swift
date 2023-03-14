@@ -15,21 +15,21 @@ class Letter {
         return letters
     }
     
-    static func getEmptyLetterArray() -> [String: PKDrawing?] {
+    static func getEmptyLetterArray() -> [String: [PKDrawing]] {
         
-        var letterArray: [String: PKDrawing?] = [:]
+        var letterArray: [String: [PKDrawing]] = [:]
         for letter in letters {
-            letterArray[letter] = nil
+            letterArray[letter] = []
         }
         
         return letterArray
     }
     
-    static func getEmptyCellArray() -> [String: DrawingCell?] {
+    static func getEmptyCellArray() -> [String: [DrawingCell]] {
         
-        var letterArray: [String: DrawingCell?] = [:]
+        var letterArray: [String: [DrawingCell]] = [:]
         for letter in letters {
-            letterArray[letter] = nil
+            letterArray[letter]! = []
         }
         
         return letterArray

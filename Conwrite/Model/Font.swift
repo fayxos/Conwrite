@@ -12,14 +12,15 @@ class Font: Encodable, Decodable {
     var id: String
     var name: String
         
-    var characters: [String: PKDrawing]
-    var normalizedCharacters: [String: PKDrawing] = [:]
+    var characters: [String: [PKDrawing]]
+    var normalizedCharacters: [String: [PKDrawing]] = [:]
+    var variationCount = 0
     
     var imageData: Data?
     
     var allCharactersCompleted: Bool = false
     
-    init(name: String, characters: [String: PKDrawing] ) {
+    init(name: String, characters: [String: [PKDrawing]] ) {
         self.name = name
         self.characters = characters
         self.id = UUID().uuidString
@@ -27,28 +28,37 @@ class Font: Encodable, Decodable {
     
     private func setImage() {
         // get drawing "a", save as image with name of font
-        let drawing = characters["A"]
-        if drawing?.bounds.width != 0 && drawing?.bounds.width != 0 {
-            imageData = (drawing?.image(from: (drawing?.bounds)!, scale: CGFloat(0)).pngData())!
+        let drawing = characters["A"]![0]
+        if drawing.bounds.width != 0 && drawing.bounds.width != 0 {
+            imageData = (drawing.image(from: (drawing.bounds), scale: CGFloat(0)).pngData())!
         }
     }
     
-    func addCharacter(character: String, drawing: PKDrawing) {
+    func addCharacter(character: String, drawing: PKDrawing, variation: Int) {
         
         // Add drawing to characters
-        characters[character] = drawing
+        if characters[character]!.count-1 < variation {
+            characters[character]!.append(PKDrawing())
+        }
+        
+        characters[character]![variation] = drawing
         
         if character == "A" {
             setImage()
         }
         
         if characters.count == Letter.getLetters().count {
-            for (_, value) in characters {
+            for (_, values) in characters {
                 // Check if there is a drawing
-                if value.bounds.width == 0 && value.bounds.height == 0 {
-                    allCharactersCompleted = false
-                    return
+                var hasChar = false
+                for value in values {
+                    if value.bounds.width != 0 && value.bounds.height != 0 {
+                        hasChar = true
+                    }
                 }
+                if hasChar { continue }
+                allCharactersCompleted = false
+                return
             }
             allCharactersCompleted = true
             

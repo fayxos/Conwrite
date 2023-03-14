@@ -57,13 +57,14 @@ class Project: Encodable, Decodable {
         case .Quad: // kariert, passt alles perfekt
             canvasHeight = canvasHeight - 10
             lineWidth = lineWidth - 10
-            lineHeight = 73.5 * 0.25 // 0.5
+            lineHeight = 73.5 * 0.5
             spaceWidth = 30 * practiceScale
             letterSpacing = 0.5
             startPosition = CGPoint(x: textMargin, y: 15)
             switch practiceScale {
             case 0.3:
                 startPosition.y = 33
+                lineHeight = 73.5 * 0.25
             case 0.4:
                 startPosition.y = 24
             case 0.5:
@@ -120,7 +121,7 @@ class Project: Encodable, Decodable {
             for word in words {
                 // Calculate the word width.
                 let wordLength = word.reduce(CGFloat(0)) {
-                    guard let letter = self.font!.characters[String($1)] else { return $0 }
+                    guard let letter = self.font!.characters[String($1)]?.filter({ $0.bounds.width != 0 }).randomElement() else { return $0 }
                     return $0 + letter.bounds.width * practiceScale + letterSpacing
                 }
                 
@@ -142,7 +143,7 @@ class Project: Encodable, Decodable {
                 
                 // Generate the letter.
                 for character in word {
-                    guard var letter = self.font!.characters[String(character)] else { continue }
+                    guard var letter = self.font!.characters[String(character)]?.filter({ $0.bounds.width != 0 }).randomElement() else { continue }
                     
                     let bounds = letter.bounds
                     letterPosition.x -= bounds.minX*practiceScale

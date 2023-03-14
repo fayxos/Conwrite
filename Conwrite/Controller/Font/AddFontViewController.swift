@@ -24,12 +24,14 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
     @IBOutlet weak var fontNameTextField: UITextField!
     @IBOutlet weak var drawingsCollectionView: UICollectionView!
     @IBOutlet weak var pencilButton: UIButton!
-    //@IBOutlet weak var variationButton: UIButton!
+    
+    @IBOutlet weak var addVariationButton: UIButton!
+    @IBOutlet weak var removeVariationButton: UIButton!
     
     var drawingView: PKCanvasView = PKCanvasView()
     
     //MARK: - Attributes
-    var letterDrawings: [String: PKDrawing?] = [:]
+    var letterDrawings: [String: [PKDrawing]] = [:]
     
     
     //= Letter.getEmptyLetterArray()
@@ -66,16 +68,6 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
         
         letterDrawings = Letter.getEmptyLetterArray()
         
-        fontNameTextField.layer.cornerRadius = 10
-        fontNameTextField.layer.borderWidth = 1
-        fontNameTextField.layer.borderColor = UIColor.white.cgColor
-        
-        drawingsCollectionView.delegate = self
-        drawingsCollectionView.dataSource = self
-        drawingsCollectionView.isEditing = true
-        
-        pencilButton.setImage(UIImage(systemName: "pencil.slash"), for: .normal)
-        
         if selectedFont != nil {
             font = selectedFont
             fontNameTextField.text = font?.name
@@ -94,6 +86,25 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
                 fontNameTextField.text = "New Writing" + String(i)
                 i += 1
             }
+            
+            font = Font(name: fontNameTextField.text!, characters: Letter.getEmptyLetterArray())
+        }
+        
+        
+        fontNameTextField.layer.cornerRadius = 10
+        fontNameTextField.layer.borderWidth = 1
+        fontNameTextField.layer.borderColor = UIColor.white.cgColor
+        
+        drawingsCollectionView.delegate = self
+        drawingsCollectionView.dataSource = self
+        drawingsCollectionView.isEditing = true
+        
+        pencilButton.setImage(UIImage(systemName: "pencil.slash"), for: .normal)
+        
+        if font?.variationCount == 0 {
+            removeVariationButton.isEnabled = false
+        } else if font?.variationCount == 2 {
+            addVariationButton.isEnabled = false
         }
         
         drawingView.delegate = self
@@ -154,12 +165,41 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
         }
     }
     
+    @IBAction func addVariation(_ sender: UIButton) {
+        
+        removeVariationButton.isEnabled = true;
+        for (key, _) in letterDrawings {
+            letterDrawings[key]?.append(PKDrawing())
+            font?.characters[key]?.append(PKDrawing())
+        }
+        
+        drawingsCollectionView.reloadData()
+        
+        font?.variationCount += 1
+        if font?.variationCount == 2 {
+            addVariationButton.isEnabled = false;
+        }
+    }
+    
+    @IBAction func removeVariation(_ sender: UIButton) {
+       
+        addVariationButton.isEnabled = true;
+        for (key, _) in letterDrawings {
+            letterDrawings[key]?.removeLast()
+            font?.characters[key]?.removeLast()
+        }
+        
+        drawingsCollectionView.reloadData()
+        
+        font?.variationCount -= 1
+        if font?.variationCount == 0 {
+            removeVariationButton.isEnabled = false;
+        }
+    }
+    
     //MARK: - SwapEditingButton
     @IBAction func swapEditingButtonTapped(_ sender: UIButton) {
         drawingIsEditing = !drawingIsEditing
-        
-        
-        
     }
     
     //MARK: - BackButton
@@ -270,13 +310,13 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
         for cell in visibleCells {
             let drawingCell = cell as! DrawingCell
             if drawingCell.isActive {
-                letterDrawings[drawingCell.letterLabel.text!] = drawingView.drawing
+                letterDrawings[drawingCell.letterLabel.text!]![drawingCell.index] = drawingView.drawing
             }
         }
         
         // Check if A canvas view has drawing
-        if let drawing = letterDrawings["A"] {
-            if drawing!.bounds.height == 0 && drawing!.bounds.width == 0 {
+        if let drawing = letterDrawings["A"]?[0] {
+            if drawing.bounds.height == 0 && drawing.bounds.width == 0 {
                 aCell?.layer.borderColor = UIColor.red.cgColor
                 showErrorAlert(errorType: .Empty)
                 return
@@ -288,9 +328,11 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
         
         // Save changes to font
         if font == nil {
-            var drawings: [String: PKDrawing] = [:]
+            var drawings: [String: [PKDrawing]] = [:]
             for (key, _) in letterDrawings {
-                drawings[key] = PKDrawing()
+                for (index, _) in letterDrawings[key]!.enumerated() {
+                    drawings[key]![index] = PKDrawing()
+                }
             }
             font = Font(name: fontNameTextField.text!, characters: drawings)
         } else {
@@ -299,8 +341,10 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
         
         
         // Store drawings in font
-        for (key, drawing) in letterDrawings {
-            font?.addCharacter(character: key, drawing: drawing!)
+        for (key, _) in letterDrawings {
+            for (index, _) in letterDrawings[key]!.enumerated() {
+                font?.addCharacter(character: key, drawing: letterDrawings[key]![index], variation: index)
+            }
         }
         
         
@@ -327,7 +371,7 @@ class AddFontViewController: UIViewController, PKToolPickerObserver, PKCanvasVie
             let drawingCell = cell as! DrawingCell
             if drawingCell.isActive {
                 let drawing = drawingView.drawing
-                letterDrawings[drawingCell.letterLabel.text!] = drawing
+                letterDrawings[drawingCell.letterLabel.text!]![drawingCell.index] = drawing
                 drawingCell.canvasView.image = drawing.image(from: CGRect(x: 0, y: 0, width: 100, height: 128), scale: 1)
                 
                 // show image
@@ -358,21 +402,23 @@ extension AddFontViewController: UICollectionViewDelegate {
 //MARK: - CV DataSource Extension
 extension AddFontViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return letters.count
+        return letters.count * (font!.variationCount+1)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = drawingsCollectionView.dequeueReusableCell(withReuseIdentifier: "drawingCell", for: indexPath) as! DrawingCell
         
-        let character: String = letters[indexPath.row]
+        let character: String = letters[indexPath.row/(font!.variationCount+1)]
         
         cell.letterLabel.text = character
-        
+        cell.index = indexPath.row % (font!.variationCount+1)
         cell.canvasView.image = nil
                 
-        if letterDrawings[character] != nil {
-            let drawing: PKDrawing = letterDrawings[character]!!
+        if letterDrawings[character]!.count-1 >= cell.index {
+            let drawing: PKDrawing = letterDrawings[character]![cell.index]
             cell.canvasView.image = drawing.image(from: CGRect(x: 0, y: 0, width: 100, height: 128), scale: 1)
+        } else {
+            letterDrawings[character]?.append(PKDrawing())
         }
         
         cell.canvasView.overrideUserInterfaceStyle = .dark
@@ -392,7 +438,7 @@ extension AddFontViewController: UICollectionViewDataSource {
             cell.insertSubview(drawingView, at: 1)
             
             if letterDrawings["A"] != nil {
-                drawingView.drawing = letterDrawings["A"]!!
+                drawingView.drawing = letterDrawings["A"]![0]
             }
             
             // Handling new active cell
@@ -430,7 +476,7 @@ extension AddFontViewController: UICollectionViewDataSource {
             if let activeCell = activeCell {
                 // save drawing
                 let drawing = drawingView.drawing
-                letterDrawings[activeCell.letterLabel.text!] = drawing
+                letterDrawings[activeCell.letterLabel.text!]![activeCell.index] = drawing
                 activeCell.canvasView.image = drawing.image(from: CGRect(x: 0, y: 0, width: 100, height: 128), scale: 1)
                 
                 // show image
@@ -450,7 +496,7 @@ extension AddFontViewController: UICollectionViewDataSource {
             
             // Handling new active cell
             if letterDrawings[cell.letterLabel.text!] != nil {
-                drawingView.drawing = letterDrawings[cell.letterLabel.text!]!!
+                drawingView.drawing = letterDrawings[cell.letterLabel.text!]![cell.index]
             }
             
             drawingView.isHidden = false
