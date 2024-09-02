@@ -65,7 +65,7 @@ extension TopBarViewController: UICollectionViewDataSource {
         cell.layer.cornerRadius = 44
         cell.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         
-        if fonts[indexPath.row].allCharactersCompleted == false {
+        if fonts[indexPath.row].basicCharactersCompleted == false {
             cell.layer.borderColor = UIColor.red.cgColor
         } 
                 

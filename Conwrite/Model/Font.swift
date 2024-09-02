@@ -18,7 +18,7 @@ class Font: Encodable, Decodable {
     
     var imageData: Data?
     
-    var allCharactersCompleted: Bool = false
+    var basicCharactersCompleted: Bool = false
     
     init(name: String, characters: [String: [PKDrawing]] ) {
         self.name = name
@@ -48,22 +48,29 @@ class Font: Encodable, Decodable {
         }
         
         if characters.count == Letter.getLetters().count {
-            for (_, values) in characters {
+            for letter in Letter.getBasicLetters() {
                 // Check if there is a drawing
-                var hasChar = false
-                for value in values {
-                    if value.bounds.width != 0 && value.bounds.height != 0 {
-                        hasChar = true
+                
+                if !characters[letter]!.isEmpty {
+                    var hasLetter = false
+                    for value in characters[letter]! {
+                        if value.bounds.width != 0 && value.bounds.height != 0 {
+                            hasLetter = true
+                        }
+                    }
+                    
+                    if hasLetter {
+                        continue
                     }
                 }
-                if hasChar { continue }
-                allCharactersCompleted = false
+                
+                basicCharactersCompleted = false
                 return
             }
-            allCharactersCompleted = true
+            basicCharactersCompleted = true
             
         } else {
-            allCharactersCompleted = false
+            basicCharactersCompleted = false
         }
         
     }
@@ -127,6 +134,8 @@ class Font: Encodable, Decodable {
         
         if let data = try? Data(contentsOf: fontFilePath!) {
             let decoder = PropertyListDecoder()
+            
+            print(data)
             
             do {
                 fonts = try decoder.decode([Font].self, from: data)

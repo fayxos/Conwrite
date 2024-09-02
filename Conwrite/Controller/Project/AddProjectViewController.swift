@@ -970,7 +970,7 @@ extension AddProjectViewController: UIScrollViewDelegate {
 extension AddProjectViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let font = fonts[indexPath.row]
-        if font.allCharactersCompleted {
+        if font.basicCharactersCompleted {
             projectFont = font
             
             fontPickerCollection!.reloadData()
@@ -1009,7 +1009,7 @@ extension AddProjectViewController: UICollectionViewDataSource {
         cell.layer.cornerRadius = 44
         cell.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         
-        if fonts[indexPath.row].allCharactersCompleted == false {
+        if fonts[indexPath.row].basicCharactersCompleted == false {
             cell.layer.borderColor = UIColor.red.cgColor
         } else if fonts[indexPath.row].id == projectFont?.id {
             cell.layer.borderWidth = 4
