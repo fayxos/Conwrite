@@ -259,6 +259,8 @@ class Project: Encodable, Decodable {
         // Process request
         do {
             try handler.perform([request])
+            try handler.perform([request])
+            try handler.perform([request])
         } catch {
             print(error)
             return nil
@@ -294,5 +296,47 @@ class Project: Encodable, Decodable {
         } catch {
             print("Error: \(error)")
         }
+    }
+    
+    static func migrateOldProjects() {
+        var oldProjects: [OldProject] = []
+        
+        if let data = try? Data(contentsOf: projectFilePath!) {
+            let decoder = PropertyListDecoder()
+            
+            print(data)
+            
+            do {
+                oldProjects = try decoder.decode([OldProject].self, from: data)
+            } catch {
+                print("Error: \(error)")
+            }
+        }
+        
+        if oldProjects.isEmpty { return }
+        
+        var newProjects = [Project]()
+        var fonts = Font.loadFonts()
+        for oldProject in oldProjects {
+            var newProject = Project(name: oldProject.name, drawings: oldProject.drawings)
+            newProject.settings = oldProject.settings
+            newProject.imageData = oldProject.imageData
+            newProject.rawText = oldProject.rawText
+            
+            if let font = oldProject.font {
+                newProject.font = fonts.first { $0.id == font.id }
+            }
+            
+            newProjects.append(newProject)
+        }
+        
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(newProjects)
+            try data.write(to: projectFilePath!)
+        } catch {
+            print("Error: \(error)")
+        }
+        
     }
 }

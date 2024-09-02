@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		DC2D3C6926D8F0D3006C9C7F /* GeneratedDrawingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2D3C6826D8F0D3006C9C7F /* GeneratedDrawingCell.swift */; };
 		DC37799726D64CED00F3F146 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC37799626D64CED00F3F146 /* Alerts.swift */; };
+		DC6CF4BC2C85EBB600F32607 /* OldFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6CF4BB2C85EBB600F32607 /* OldFont.swift */; };
+		DC6CF4BE2C85F5A600F32607 /* OldProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6CF4BD2C85F5A600F32607 /* OldProject.swift */; };
 		DC79AD0B26BB057900623DE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC79AD0A26BB057900623DE2 /* AppDelegate.swift */; };
 		DC79AD0D26BB057900623DE2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC79AD0C26BB057900623DE2 /* SceneDelegate.swift */; };
 		DC79AD0F26BB057900623DE2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC79AD0E26BB057900623DE2 /* ViewController.swift */; };
@@ -35,6 +37,8 @@
 /* Begin PBXFileReference section */
 		DC2D3C6826D8F0D3006C9C7F /* GeneratedDrawingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedDrawingCell.swift; sourceTree = "<group>"; };
 		DC37799626D64CED00F3F146 /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
+		DC6CF4BB2C85EBB600F32607 /* OldFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldFont.swift; sourceTree = "<group>"; };
+		DC6CF4BD2C85F5A600F32607 /* OldProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldProject.swift; sourceTree = "<group>"; };
 		DC79AD0726BB057900623DE2 /* Conwrite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Conwrite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC79AD0A26BB057900623DE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DC79AD0C26BB057900623DE2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -156,6 +160,8 @@
 				DC80E34626BE9C7D007DCC8B /* CustomEnums.swift */,
 				DC86F34E26C67038005094A9 /* ImageFunctions.swift */,
 				DC37799626D64CED00F3F146 /* Alerts.swift */,
+				DC6CF4BB2C85EBB600F32607 /* OldFont.swift */,
+				DC6CF4BD2C85F5A600F32607 /* OldProject.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -240,6 +246,7 @@
 				DCEFE6DF26BDDA0500F9311B /* FontCell.swift in Sources */,
 				DC80E34F26BED564007DCC8B /* DrawingCell.swift in Sources */,
 				DC79AD0F26BB057900623DE2 /* ViewController.swift in Sources */,
+				DC6CF4BC2C85EBB600F32607 /* OldFont.swift in Sources */,
 				DCEFE6DA26BDCD0000F9311B /* Font.swift in Sources */,
 				DC7C52AB26C2995100748FCE /* AddProjectViewController.swift in Sources */,
 				DC79AD0B26BB057900623DE2 /* AppDelegate.swift in Sources */,
@@ -249,6 +256,7 @@
 				DC79AD2226BB0CC200623DE2 /* MainViewController.swift in Sources */,
 				DC80E35126BED7F4007DCC8B /* Letter.swift in Sources */,
 				DCEFE6E126BDDEE400F9311B /* Extenions.swift in Sources */,
+				DC6CF4BE2C85F5A600F32607 /* OldProject.swift in Sources */,
 				DC2D3C6926D8F0D3006C9C7F /* GeneratedDrawingCell.swift in Sources */,
 				DC80E34526BE9BA1007DCC8B /* Project.swift in Sources */,
 			);

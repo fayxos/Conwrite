@@ -13,7 +13,6 @@ class Font: Encodable, Decodable {
     var name: String
         
     var characters: [String: [PKDrawing]]
-    var normalizedCharacters: [String: [PKDrawing]] = [:]
     var variationCount = 0
     
     var imageData: Data?
@@ -47,6 +46,10 @@ class Font: Encodable, Decodable {
             setImage()
         }
         
+        updateBasicCharactersCompleted()
+    }
+    
+    func updateBasicCharactersCompleted() {
         if characters.count == Letter.getLetters().count {
             for letter in Letter.getBasicLetters() {
                 // Check if there is a drawing
@@ -72,7 +75,6 @@ class Font: Encodable, Decodable {
         } else {
             basicCharactersCompleted = false
         }
-        
     }
     
     func saveToDatabase() {
@@ -177,5 +179,52 @@ class Font: Encodable, Decodable {
         }
     }
     
+    static func migrateOldFonts() {
+        var oldFonts: [OldFont] = []
+        
+        if let data = try? Data(contentsOf: fontFilePath!) {
+            let decoder = PropertyListDecoder()
+            
+            print(data)
+            
+            do {
+                oldFonts = try decoder.decode([OldFont].self, from: data)
+            } catch {
+                print("Error: \(error)")
+            }
+        }
+        
+        if oldFonts.isEmpty { return }
+        
+        var newFonts = [Font]()
+        for oldFont in oldFonts {
+            var newCharacters = [String: [PKDrawing]]()
+            for letter in Letter.getLetters() {
+                newCharacters[letter] = []
+                if oldFont.characters[letter] != nil {
+                    newCharacters[letter]!.append(oldFont.characters[letter]!)
+                }
+            }
+            for (key, value) in oldFont.characters {
+                newCharacters[key] = [value]
+            }
+            
+            let newFont = Font(name: oldFont.name, characters: newCharacters)
+            newFont.id = oldFont.id
+            newFont.imageData = oldFont.imageData
+            newFont.updateBasicCharactersCompleted()
+            
+            newFonts.append(newFont)
+        }
+        
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(newFonts)
+            try data.write(to: fontFilePath!)
+        } catch {
+            print("Error: \(error)")
+        }
+        
+    }
     
 }

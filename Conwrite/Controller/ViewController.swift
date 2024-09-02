@@ -19,9 +19,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //Font.clearDatabase()
-        //Project.clearDatabase()
     }
     
 //    func addGestureRegonizer() {

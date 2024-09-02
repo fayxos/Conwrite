@@ -20,7 +20,7 @@ class TopBarViewController: UIViewController {
         super.viewDidLoad()
 
         fontCollectionView.delegate = self
-        fontCollectionView.dataSource = self
+        fontCollectionView.dataSource = self        
     }
     
     @IBAction func addFontButtonTapped(_ sender: UIButton) {

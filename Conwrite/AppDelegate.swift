@@ -17,6 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //IQKeyboardManager.shared.enable = true
         
+        if !UserDefaults.standard.bool(forKey: "Migrated") {
+            Font.migrateOldFonts()
+            Project.migrateOldProjects()
+            UserDefaults.standard.set(true, forKey: "Migrated")
+        }
+        
         return true
     }
 
